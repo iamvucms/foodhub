@@ -2,6 +2,7 @@ import { StyleSheet, Text } from 'react-native';
 import React from 'react';
 import { Colors } from '../contants/colors';
 import { setYAxisValue } from '../utils';
+import { isWeb } from '../utils';
 export const FontWeights = {
   100: 'SofiaPro-UltraLight',
   200: 'SofiaPro-ExtraLight',
@@ -36,7 +37,8 @@ const FText = ({
 }) => {
   const size = isNaN(fontSize) ? FontSizes[fontSize] : fontSize;
   const textStyles = {
-    fontFamily: FontWeights[fontWeight],
+    fontWeight,
+    fontFamily: 'Sofia Pro',
     color,
     fontSize: size,
     lineHeight: size * lineHeightRatio

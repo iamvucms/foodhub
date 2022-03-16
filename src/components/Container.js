@@ -1,20 +1,15 @@
-import {StyleSheet, StatusBar, View} from 'react-native';
+import { StyleSheet, StatusBar, View } from 'react-native';
 import React from 'react';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const Container = ({children, disableFirst, disableLast, statusBarProps}) => {
-  const {bottom, top} = useSafeAreaInsets();
+const Container = ({ children, disableFirst, disableLast, statusBarProps }) => {
+  const { bottom, top } = useSafeAreaInsets();
   return (
     <View style={styles.container}>
-      {!disableFirst && <View style={[styles.bar, {height: top}]} />}
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="dark-content"
-        {...statusBarProps}
-      />
-      {children}
-      {!disableLast && <View style={[styles.bar, {height: bottom}]} />}
+      {!disableFirst && <View style={[styles.bar, { height: top }]} />}
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" {...statusBarProps} />
+      <View style={styles.container}>{children}</View>
+      {!disableLast && <View style={[styles.bar, { height: bottom }]} />}
     </View>
   );
 };
@@ -24,10 +19,10 @@ export default Container;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
   bar: {
     width: '100%',
-    backgroundColor: '#fff',
-  },
+    backgroundColor: '#fff'
+  }
 });
