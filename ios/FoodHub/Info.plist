@@ -53,22 +53,22 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>SofiaProBlack.otf</string>
-		<string>SofiaProBlackItalic.otf</string>
-		<string>SofiaProBold.otf</string>
-		<string>SofiaProBoldItalic.otf</string>
-		<string>SofiaProExtraLight.otf</string>
-		<string>SofiaProExtraLightItalic.otf</string>
-		<string>SofiaProLight.otf</string>
-		<string>SofiaProLightItalic.otf</string>
-		<string>SofiaProMedium.otf</string>
-		<string>SofiaProMediumItalic.otf</string>
-		<string>SofiaProRegular.otf</string>
-		<string>SofiaProRegularItalic.otf</string>
-		<string>SofiaProSemiBold.otf</string>
-		<string>SofiaProSemiBoldItalic.otf</string>
-		<string>SofiaProUltraLight.otf</string>
-		<string>SofiaProUltraLightItalic.otf</string>
+		<string>SofiaPro-Black-Italic.otf</string>
+		<string>SofiaPro-Black.otf</string>
+		<string>SofiaPro-Bold-Italic.otf</string>
+		<string>SofiaPro-Bold.otf</string>
+		<string>SofiaPro-ExtraLight-Italic.otf</string>
+		<string>SofiaPro-ExtraLight.otf</string>
+		<string>SofiaPro-Light-Italic.otf</string>
+		<string>SofiaPro-Light.otf</string>
+		<string>SofiaPro-Medium-Italic.otf</string>
+		<string>SofiaPro-Medium.otf</string>
+		<string>SofiaPro-Regular-Italic.otf</string>
+		<string>SofiaPro-Regular.otf</string>
+		<string>SofiaPro-Semi-Bold-Italic.otf</string>
+		<string>SofiaPro-Semi-Bold.otf</string>
+		<string>SofiaPro-UltraLight-Italic.otf</string>
+		<string>SofiaPro-UltraLight.otf</string>
 	</array>
 </dict>
 </plist>
