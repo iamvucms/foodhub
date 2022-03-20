@@ -20,5 +20,7 @@ export const Colors = {
   gray_40: '#E0E3E9',
   gray_20: '#F5F7FA',
   white: '#FFFFFF',
-  border: '#EEEEEE'
+  border: '#EEEEEE',
+  lighter_border: '#F6F6F6',
+  transparent: 'rgba(0,0,0,0)'
 };

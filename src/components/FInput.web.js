@@ -1,7 +1,7 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import FText, { FontSizes, FontWeights } from './FText';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 

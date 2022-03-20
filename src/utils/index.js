@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { Layout } from '../contants';
+import { Layout } from '../constants';
 
 const {
   window: { width, height },

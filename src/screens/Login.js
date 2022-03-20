@@ -4,7 +4,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { BackButton, Container, FText } from '../components';
 import FInput from '../components/FInput';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 
 const Login = () => {
@@ -14,6 +14,15 @@ const Login = () => {
   const onSignUpPress = React.useCallback(() => {
     navigation.navigate('SignUp');
   }, []);
+  const onResetPassword = React.useCallback(() => {
+    navigation.navigate('ResetPassword');
+  }, []);
+  const onNextPress = React.useCallback(() => {
+    //action
+    navigation.navigate('OTPVerification', {
+      username
+    });
+  }, [username, password]);
   return (
     <Container disableFirst>
       <View style={styles.topDecorContainer}>
@@ -46,20 +55,20 @@ const Login = () => {
             placeholder="Enter your password"
           />
         </View>
-        <TouchableOpacity style={styles.btnLogin}>
+        <TouchableOpacity onPress={onNextPress} style={styles.btnLogin}>
           <FText color={Colors.white} fontWeight="700">
-            SIGN UP
+            LOGIN
           </FText>
         </TouchableOpacity>
         <View style={styles.alreadyHaveAccount}>
           <FText fontSize={14}>
-            Don't have account?
-            <FText fontSize={14} color={Colors.primary} onPress={onSignUpPress}>
-              {' '}
-              Sign Up{' '}
+            Forgot your password?{' '}
+            <FText fontSize={14} color={Colors.primary} onPress={onResetPassword}>
+              Reset Password
             </FText>
           </FText>
         </View>
+
         <View style={styles.signInSection}>
           <View style={styles.grayLine} />
           <FText style={styles.signInTxt} fontSize="small" color={Colors.typography_80}>
@@ -76,6 +85,15 @@ const Login = () => {
             <Image style={styles.brandIcon} source={require('../assets/images/google-circle.png')} />
             <FText fontSize={13}>GOOGLE</FText>
           </TouchableOpacity>
+        </View>
+        <View style={styles.alreadyHaveAccount}>
+          <FText fontSize={14}>
+            Don't have account?
+            <FText fontSize={14} color={Colors.primary} onPress={onSignUpPress}>
+              {' '}
+              Sign Up{' '}
+            </FText>
+          </FText>
         </View>
       </KeyboardAwareScrollView>
     </Container>

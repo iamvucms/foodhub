@@ -1,12 +1,12 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Image } from 'react-native';
 import React from 'react';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import FText, { FontSizes, FontWeights } from './FText';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const FInput = React.forwardRef(
-  ({ title, placeholder, isPassword, containerStyle, inputStyle, inputContainerStyle, ...restProps }, inputRef) => {
+  ({ title, icon, placeholder, isPassword, containerStyle, inputStyle, inputContainerStyle, ...restProps }, inputRef) => {
     const [showPassword, setShowPassword] = React.useState(isPassword);
     const toggleShowPassword = React.useCallback(() => setShowPassword(!showPassword), [showPassword]);
     const animBorder = useSharedValue(0);
@@ -22,11 +22,14 @@ const FInput = React.forwardRef(
       };
     });
     return (
-      <View style={containerStyle}>
-        <FText style={styles.title} color={Colors.typography_60}>
-          {title}
-        </FText>
+      <View style={[containerStyle, { flex: 1 }]}>
+        {title && (
+          <FText style={styles.title} color={Colors.typography_60}>
+            {title}
+          </FText>
+        )}
         <Animated.View style={[styles.inputContainerBase, inputContainerExtraStyle, inputContainerStyle]}>
+          {icon && <View style={styles.iconContainer}>{icon}</View>}
           <TextInput
             onFocus={onFocus}
             onBlur={onBlur}
@@ -34,7 +37,13 @@ const FInput = React.forwardRef(
             secureTextEntry={showPassword}
             placeholderTextColor={Colors.typography_20}
             placeholder={placeholder}
-            style={[styles.inputBase, inputStyle]}
+            style={[
+              styles.inputBase,
+              inputStyle,
+              !icon && {
+                paddingLeft: setXAxisValue(20)
+              }
+            ]}
             {...restProps}></TextInput>
           {isPassword && (
             <TouchableOpacity onPress={toggleShowPassword} style={styles.btnEye}>
@@ -55,22 +64,24 @@ export default React.memo(FInput);
 
 const styles = StyleSheet.create({
   inputContainerBase: {
-    width: '100%',
+    flex: 1,
     height: setYAxisValue(65),
     borderRadius: setValue(10),
     borderColor: Colors.border,
-    borderWidth: 1
+    borderWidth: 1,
+    flexDirection: 'row'
   },
   title: {
     marginBottom: setYAxisValue(10)
   },
   inputBase: {
-    width: '100%',
+    flex: 1,
     height: '100%',
-    paddingHorizontal: setXAxisValue(20),
+    paddingRight: setXAxisValue(20),
     fontSize: FontSizes['medium'],
     fontFamily: FontWeights[400],
-    color: Colors.typography
+    color: Colors.typography,
+    overflow: 'hidden'
   },
   btnEye: {
     position: 'absolute',
@@ -80,5 +91,11 @@ const styles = StyleSheet.create({
   eyeIcon: {
     width: setXAxisValue(18),
     height: setYAxisValue(12)
+  },
+  iconContainer: {
+    height: '100%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

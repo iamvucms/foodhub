@@ -1,9 +1,9 @@
 import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import React from 'react';
 import { BackButton, Container, FText } from '../components';
-import { Layout } from '../contants';
+import { Layout } from '../constants';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import FInput from '../components/FInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';

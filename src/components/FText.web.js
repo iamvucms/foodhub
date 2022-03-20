@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import React from 'react';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import { setYAxisValue } from '../utils';
 import { isWeb } from '../utils';
 export const FontWeights = {

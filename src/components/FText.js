@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from 'react-native';
 import React from 'react';
-import { Colors } from '../contants/colors';
+import { Colors } from '../constants/colors';
 import { setYAxisValue } from '../utils';
 export const FontWeights = {
   100: 'SofiaPro-UltraLight',
@@ -30,7 +30,8 @@ const FText = ({
   fontWeight = 400,
   fontSize = 'normal',
   color = Colors.typography,
-  lineHeightRatio = 1.5,
+  lineHeightRatio,
+  lineHeight,
   style,
   ...restProps
 }) => {
@@ -39,7 +40,8 @@ const FText = ({
     fontFamily: FontWeights[fontWeight],
     color,
     fontSize: size,
-    lineHeight: size * lineHeightRatio
+    ...(lineHeightRatio && { lineHeight: size * lineHeightRatio }),
+    ...(lineHeight && { lineHeight })
   };
   return (
     <Text style={[styles.base, textStyles, style]} {...restProps}>
