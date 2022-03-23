@@ -22,5 +22,8 @@ export const Colors = {
   white: '#FFFFFF',
   border: '#EEEEEE',
   lighter_border: '#F6F6F6',
-  transparent: 'rgba(0,0,0,0)'
+  smoky: '#5B5B5E',
+  transparent: 'rgba(0,0,0,0)',
+  aslo_gray: '#858992',
+  grey_suit: '#9796A1'
 };

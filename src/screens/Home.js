@@ -1,11 +1,90 @@
 import { StyleSheet, TouchableOpacity, Image, View, ScrollView, Pressable } from 'react-native';
 import React from 'react';
-import { Container, FInput, FoodCategoryList, FText, RestaurantCarousel } from '../components';
+import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCarousel } from '../components';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
-import { ChevronRightSvg, DiscoverSvg, SearchSvg } from '../assets/svg';
-
+import { ChevronRightSvg, SearchSvg } from '../assets/svg';
+import { useStore } from '../stores';
+import { observer } from 'mobx-react-lite';
+import { runInAction } from 'mobx';
+const foodData = [
+  {
+    id: 1,
+    name: 'Chicken Tikka',
+    avgRate: 4.5,
+    totalReviews: 25,
+    image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg',
+    short_description: 'Fast food',
+    description:
+      'Chicken Tikka Skewers is a fast food restaurant in the heart of the city. It is a place where you can enjoy the best chicken tikka skewers in the city.',
+    price: 10.5,
+    options: [
+      {
+        id: 1,
+        name: 'Pepper Julienned',
+        price: 2.5,
+        image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg'
+      },
+      {
+        id: 2,
+        name: 'Baby Spinach',
+        price: 4.5,
+        image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg'
+      },
+      {
+        id: 3,
+        name: 'Masroom',
+        price: 4.5,
+        image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg'
+      }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Chicken Tikka',
+    avgRate: 4.5,
+    totalReviews: 25,
+    image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg',
+    short_description: 'Fast food',
+    description:
+      'Chicken Tikka Skewers is a fast food restaurant in the heart of the city. It is a place where you can enjoy the best chicken tikka skewers in the city.',
+    price: 10.5,
+    options: []
+  },
+  {
+    id: 3,
+    name: 'Chicken Tikka',
+    avgRate: 4.5,
+    totalReviews: 25,
+    image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg',
+    short_description: 'Fast food',
+    description:
+      'Chicken Tikka Skewers is a fast food restaurant in the heart of the city. It is a place where you can enjoy the best chicken tikka skewers in the city.',
+    price: 10.5,
+    options: []
+  },
+  {
+    id: 4,
+    name: 'Chicken Tikka',
+    avgRate: 4.5,
+    totalReviews: 25,
+    image: 'https://www.kitchensanctuary.com/wp-content/uploads/2020/07/Chicken-Tikka-Skewers-square-FS-77.jpg',
+    short_description: 'Fast food',
+    description:
+      'Chicken Tikka Skewers is a fast food restaurant in the heart of the city. It is a place where you can enjoy the best chicken tikka skewers in the city.',
+    price: 10.5,
+    options: []
+  }
+];
 const Home = () => {
+  const userStore = useStore('user');
+  React.useEffect(() => {
+    setTimeout(() => {
+      runInAction(() => {
+        userStore.likes.push(1);
+      });
+    }, 3000);
+  }, []);
   return (
     <Container disableLast>
       <View style={styles.header}>
@@ -74,14 +153,14 @@ const Home = () => {
               <ChevronRightSvg color={Colors.primary} />
             </TouchableOpacity>
           </View>
-          <RestaurantCarousel />
+          <FoodCarousel data={foodData} />
         </View>
       </ScrollView>
     </Container>
   );
 };
 
-export default Home;
+export default observer(Home);
 
 const styles = StyleSheet.create({
   menuIcon: {
@@ -98,12 +177,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 3
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOpacity: 0.05,
+    shadowRadius: 4.65,
 
-    elevation: 5
+    elevation: 6
   },
   avatar: {
     width: '100%',

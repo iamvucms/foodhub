@@ -9,7 +9,7 @@ import FInput from '../components/FInput';
 import { Colors } from '../constants/colors';
 import { isAndroid, setValue, setXAxisValue, setYAxisValue } from '../utils';
 
-const OTPVerfication = ({ navigation, route }) => {
+const OTPVerification = ({ navigation, route }) => {
   const { username } = route.params || {};
   const [otp, setOTP] = React.useState('');
   const inputRef = React.useRef();
@@ -78,7 +78,7 @@ const OTPVerfication = ({ navigation, route }) => {
   );
 };
 
-export default OTPVerfication;
+export default OTPVerification;
 
 const styles = StyleSheet.create({
   topDecorContainer: {

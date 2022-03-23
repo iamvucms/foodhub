@@ -1,6 +1,7 @@
 import { StyleSheet, StatusBar, View } from 'react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { setYAxisValue } from '../utils';
 
 const Container = ({ children, disableFirst, disableLast, statusBarProps }) => {
   const { bottom, top } = useSafeAreaInsets();
@@ -9,7 +10,7 @@ const Container = ({ children, disableFirst, disableLast, statusBarProps }) => {
       {!disableFirst && <View style={[styles.bar, { height: top }]} />}
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" {...statusBarProps} />
       <View style={styles.container}>{children}</View>
-      {!disableLast && <View style={[styles.bar, { height: bottom }]} />}
+      {!disableLast && <View style={[styles.bar, { height: bottom > 0 ? bottom : setYAxisValue(26) }]} />}
     </View>
   );
 };

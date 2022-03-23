@@ -1,22 +1,22 @@
-import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Onboarding from '../screens/Onboarding';
-import Animated, { FadeIn } from 'react-native-reanimated';
-import { config } from './config';
-import Login from '../screens/Login';
-import Home from '../screens/Home';
-import SignUp from '../screens/SignUp';
+import React from 'react';
+import { BottomTabBar } from '../components';
+import Cart from '../screens/Cart';
 import CategoryDetail from '../screens/CategoryDetail';
+import FoodDetail from '../screens/FoodDetail';
+import Home from '../screens/Home';
+import Login from '../screens/Login';
+import Onboarding from '../screens/Onboarding';
 import Orders from '../screens/Orders';
 import OTPVerification from '../screens/OTPVerification';
 import PhoneNumber from '../screens/PhoneNumber';
-import ResetPassword from '../screens/ResetPassword';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Cart from '../screens/Cart';
 import Profile from '../screens/Profile';
-import { BottomTabBar } from '../components';
-import { Colors } from '../constants/colors';
+import ResetPassword from '../screens/ResetPassword';
+import RestaurantReview from '../screens/RestaurantReview';
+import SignUp from '../screens/SignUp';
+import { config } from './config';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const AppNavigation = () => {
@@ -31,22 +31,35 @@ const AppNavigation = () => {
   const HomeStack = () => (
     <Stack.Navigator screenOptions={config}>
       <Stack.Screen name="HomeTab" component={HomeTab} />
+      <Stack.Screen
+        name="FoodDetail"
+        options={{
+          animation: 'none'
+        }}
+        component={FoodDetail}
+      />
+      <Stack.Screen name="RestaurantReview" component={RestaurantReview} />
+    </Stack.Navigator>
+  );
+  const OnboardingStack = () => (
+    <Stack.Navigator screenOptions={config}>
+      <Stack.Screen name="Onboarding" component={Onboarding} />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="OTPVerification" component={OTPVerification} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
+      <Stack.Screen name="CategoryDetail" component={CategoryDetail} />
     </Stack.Navigator>
   );
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={config}>
-        {/* <Stack.Screen name="Onboarding" component={Onboarding} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="OTPVerification" component={OTPVerification} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} />
-        <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
-        <Stack.Screen name="CategoryDetail" component={CategoryDetail} /> */}
+        {/* <Stack.Screen name="OnboardingStack" component={OnboardingStack} /> */}
         <Stack.Screen name="HomeStack" component={HomeStack} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default AppNavigation;
+export default React.memo(AppNavigation);

@@ -27,3 +27,11 @@ export const getHeight = () => height;
 export const getWidth = () => width;
 export const isAndroid = Platform.OS === 'android';
 export const isWeb = Platform.OS === 'web';
+
+export const compareCartItemAddOns = (a, b) => {
+  if (a.options.length !== b.options.length) return false;
+  for (let i = 0; i < a.options.length; i++) {
+    if (a.options[i].id !== b.options[i].id) return false;
+  }
+  return true;
+};

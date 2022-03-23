@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, View, TouchableOpacity, Pressable } from 'react-native';
 import React from 'react';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import FText from './FText';
@@ -17,7 +17,7 @@ const data = {
 };
 const RestaurantCard = ({ item = data, onPress }) => {
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <Image style={styles.banner} source={{ uri: item.cover_image }} />
       <View style={styles.headerInfo}>
         <View style={styles.reviewInfo}>
@@ -62,7 +62,7 @@ const RestaurantCard = ({ item = data, onPress }) => {
           ))}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

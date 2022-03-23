@@ -1,14 +1,16 @@
-import {action, makeObservable, observable} from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 
 class UserStore {
   user = {};
   logined = false;
+  likes = [];
   constructor() {
     makeObservable(this, {
       user: observable,
       logined: observable,
+      likes: observable,
       setUser: action,
-      setLogined: action,
+      setLogined: action
     });
   }
   setUser(user) {

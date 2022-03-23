@@ -1,10 +1,12 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import React from 'react';
 import { CartSvg, DiscoverSvg, OrderSvg, ProfileSvg } from '../assets/svg';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { setValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import Animated, { BounceIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
+import { Observer } from 'mobx-react-lite';
+import { useStore } from '../stores';
+import FText from './FText';
 const tabBarData = [
   {
     name: 'Home',
@@ -28,20 +30,31 @@ const tabBarData = [
   }
 ];
 const BottomTabBar = ({ navigation, state }) => {
+  const cartStore = useStore('cart');
   const renderTabBarItem = (item, index) => {
     const isActive = state.index === index;
+    const isCart = item.routeName === 'Cart';
     const onPress = () => navigation.navigate(item.routeName);
     return (
-      <TouchableOpacity onPress={onPress} key={item.name} style={styles.tabItem}>
-        {isActive && <Animated.View entering={BounceIn} style={styles.activeLine} />}
-        {isActive ? (
-          <Animated.View entering={FadeInUp}>
-            <item.icon color={Colors.primary} />
-          </Animated.View>
-        ) : (
-          <item.icon color={Colors.typography_40} />
+      <Observer key={item.name}>
+        {() => (
+          <Pressable onPress={onPress} style={styles.tabItem}>
+            {isActive && <Animated.View entering={BounceIn} style={styles.activeLine} />}
+            {isActive ? (
+              <Animated.View entering={FadeInUp}>
+                <item.icon color={Colors.primary} />
+              </Animated.View>
+            ) : (
+              <item.icon color={Colors.typography_40} />
+            )}
+            {isCart && (
+              <View style={styles.cartBadge}>
+                <FText fontSize={10} color={Colors.white}>{`${cartStore.cartItemsTotalAmount}`}</FText>
+              </View>
+            )}
+          </Pressable>
         )}
-      </TouchableOpacity>
+      </Observer>
     );
   };
   return (
@@ -77,5 +90,13 @@ const styles = StyleSheet.create({
     top: 0,
     borderBottomRightRadius: setValue(3),
     borderBottomLeftRadius: setValue(3)
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: setYAxisValue(10),
+    right: setXAxisValue(30),
+    padding: setValue(3),
+    borderRadius: 99,
+    backgroundColor: Colors.primary
   }
 });

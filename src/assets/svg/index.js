@@ -8,3 +8,5 @@ export { default as HeartSvg } from './heart';
 export { default as OrderSvg } from './order';
 export { default as ProfileSvg } from './profile';
 export { default as ChevronRightSvg } from './chevron-right';
+export { default as DecrementSvg } from './decrement';
+export { default as IncrementSvg } from './increment';
