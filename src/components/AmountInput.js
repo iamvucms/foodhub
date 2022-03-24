@@ -6,7 +6,8 @@ import { Colors } from '../constants/colors';
 import FText from './FText';
 import { observer } from 'mobx-react-lite';
 
-const AmountInput = observer(({ value = 0, onChangeValue, size = 30.6, allowZero = false }) => {
+const AmountInput = ({ value, onChangeValue, size = 30.6, allowZero = false }) => {
+  console.log('render amount');
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -39,7 +40,7 @@ const AmountInput = observer(({ value = 0, onChangeValue, size = 30.6, allowZero
       </TouchableOpacity>
     </View>
   );
-});
+};
 
 export default AmountInput;
 

@@ -20,7 +20,7 @@ import { Colors } from '../constants/colors';
 import { cartStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { uid } from 'uid';
-import { Observer, useLocalObservable } from 'mobx-react-lite';
+import { observer, Observer, useLocalObservable } from 'mobx-react-lite';
 const bannerHeight = setYAxisValue(206);
 const bannerWidth = Layout.window.width - setXAxisValue(52);
 const bannerRadius = setValue(10);
@@ -33,12 +33,15 @@ const FoodDetail = ({ route, navigation }) => {
     image: { x, y, width: imgWidth, height: imgHeight }
   } = route.params;
   const { top } = useSafeAreaInsets();
-  const [amount, setAmount] = useState(1);
   const anim = useSharedValue(0);
   const isFocused = useIsFocused();
   const localState = useLocalObservable(() => ({
     addOns: [],
-    toggleAddOne(index) {
+    amount: 1,
+    onAmountChange(value) {
+      this.amount = value;
+    },
+    toggleAddOn(index) {
       const option = data.options[index];
       if (!option) {
         return;
@@ -49,6 +52,13 @@ const FoodDetail = ({ route, navigation }) => {
       } else {
         this.addOns.push(option);
       }
+    },
+    reset() {
+      this.addOns.splice(0, this.addOns.length);
+      this.amount = 1;
+    },
+    get totalPrice() {
+      return this.amount * data.price + this.addOns.reduce((acc, item) => acc + item.price, 0);
     }
   }));
   useEffect(() => {
@@ -76,10 +86,11 @@ const FoodDetail = ({ route, navigation }) => {
       ...data,
       id: uid(),
       product_id: data.id,
-      amount,
-      options: localState.addOns
+      amount: localState.amount,
+      options: localState.addOns.slice() // remove reference
     });
-  }, [amount, data, localState.addOns]);
+    localState.reset();
+  }, [localState.amount, data, localState.addOns]);
   const onBackPress = () => {
     const callback = () => navigation.goBack();
     anim.value = withTiming(0, {}, () => runOnJS(callback)());
@@ -88,7 +99,7 @@ const FoodDetail = ({ route, navigation }) => {
     isFocused && onBackPress();
     return true;
   });
-  console.log('render ');
+  console.log('render food detail');
   return (
     <Container>
       <View style={styles.container}>
@@ -138,7 +149,7 @@ const FoodDetail = ({ route, navigation }) => {
                 {data.price}
               </FText>
             </FText>
-            <AmountInput value={amount} onChangeValue={setAmount} />
+            <Observer>{() => <AmountInput value={localState.amount} onChangeValue={localState.onAmountChange} />}</Observer>
           </View>
           <FText fontSize={15} lineHeightRatio={1.57} color={Colors.aslo_gray}>
             {data.description}
@@ -147,35 +158,8 @@ const FoodDetail = ({ route, navigation }) => {
           <FText size={18} lineHeight={18} fontWeight={600}>
             Choice of Add On
           </FText>
-          <ScrollView style={styles.addonContainer}>
-            {data.options.map((item, index) => (
-              <Observer key={item.id}>
-                {() => (
-                  <Pressable onPress={() => localState.toggleAddOne(index)} style={styles.addonItem}>
-                    <Image
-                      style={styles.addonImage}
-                      source={{
-                        uri: item.image
-                      }}
-                    />
-                    <Padding paddingRight={15} />
-                    <View style={styles.addonText}>
-                      <FText fontSize={14} lineHeight={17}>
-                        {item.name}
-                      </FText>
-                    </View>
-                    <FText fontSize={14} lineHeight={17}>
-                      +${item.price}
-                    </FText>
-                    <View style={styles.checkContainer}>
-                      {localState.addOns.find(opt => opt.id === item.id) && <View style={styles.checkInner} />}
-                    </View>
-                  </Pressable>
-                )}
-              </Observer>
-            ))}
-          </ScrollView>
-          <ButtonIcon onPress={onAddToCard} icon={CartSvg} text={`ADD TO CART ($10.5)`} />
+          <AddonList options={data.options} addOns={localState.addOns} toggleAddOn={localState.toggleAddOn} />
+          <Observer>{() => <ButtonIcon onPress={onAddToCard} icon={CartSvg} text={`ADD TO CART ($${localState.totalPrice})`} />}</Observer>
         </Animated.View>
       </View>
     </Container>
@@ -183,7 +167,34 @@ const FoodDetail = ({ route, navigation }) => {
 };
 
 export default React.memo(FoodDetail);
-
+const AddonList = observer(({ options, addOns, toggleAddOn }) => (
+  <ScrollView style={styles.addonContainer}>
+    {options.map((item, index) => (
+      <Observer key={item.id}>
+        {() => (
+          <Pressable onPress={() => toggleAddOn(index)} style={styles.addonItem}>
+            <Image
+              style={styles.addonImage}
+              source={{
+                uri: item.image
+              }}
+            />
+            <Padding paddingRight={15} />
+            <View style={styles.addonText}>
+              <FText fontSize={14} lineHeight={17}>
+                {item.name}
+              </FText>
+            </View>
+            <FText fontSize={14} lineHeight={17}>
+              +${item.price}
+            </FText>
+            <View style={styles.checkContainer}>{addOns.find(opt => opt.id === item.id) && <View style={styles.checkInner} />}</View>
+          </Pressable>
+        )}
+      </Observer>
+    ))}
+  </ScrollView>
+));
 const styles = StyleSheet.create({
   container: {
     flex: 1,

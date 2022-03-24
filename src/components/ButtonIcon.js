@@ -5,6 +5,7 @@ import FText from './FText';
 import { Colors } from '../constants/colors';
 
 const ButtonIcon = ({ text, icon: Icon, onPress }) => {
+  console.log('render button icon');
   return (
     <TouchableOpacity
       onPress={onPress}

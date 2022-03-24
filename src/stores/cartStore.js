@@ -49,10 +49,10 @@ class CartStore {
     );
   }
   get taxAndFee() {
-    return (this.tax * this.subTotal + this.fee).toFixed(2);
+    return (this.tax * this.subTotal - -this.fee).toFixed(2);
   }
   get total() {
-    return this.subTotal + this.taxAndFee + this.delivery_fee;
+    return this.subTotal - -this.taxAndFee - -this.delivery_fee;
   }
   get cartItemsCount() {
     return this.cartItems.length;
