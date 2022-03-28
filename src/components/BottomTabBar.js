@@ -36,25 +36,27 @@ const BottomTabBar = ({ navigation, state }) => {
     const isCart = item.routeName === 'Cart';
     const onPress = () => navigation.navigate(item.routeName);
     return (
-      <Observer key={item.name}>
-        {() => (
-          <Pressable onPress={onPress} style={styles.tabItem}>
-            {isActive && <Animated.View entering={BounceIn} style={styles.activeLine} />}
-            {isActive ? (
-              <Animated.View entering={FadeInUp}>
-                <item.icon color={Colors.primary} />
-              </Animated.View>
-            ) : (
-              <item.icon color={Colors.typography_40} />
-            )}
-            {isCart && (
-              <View style={styles.cartBadge}>
-                <FText fontSize={10} color={Colors.white}>{`${cartStore.cartItemsTotalAmount}`}</FText>
-              </View>
-            )}
-          </Pressable>
+      <Pressable key={item.name} onPress={onPress} style={styles.tabItem}>
+        {isActive && <Animated.View entering={BounceIn} style={styles.activeLine} />}
+        {isActive ? (
+          <Animated.View entering={FadeInUp}>
+            <item.icon color={Colors.primary} />
+          </Animated.View>
+        ) : (
+          <item.icon color={Colors.typography_40} />
         )}
-      </Observer>
+        <Observer>
+          {() => (
+            <React.Fragment>
+              {isCart && cartStore.cartItemsTotalAmount > 0 && (
+                <View style={styles.cartBadge}>
+                  <FText fontSize={10} color={Colors.white}>{`${cartStore.cartItemsTotalAmount}`}</FText>
+                </View>
+              )}
+            </React.Fragment>
+          )}
+        </Observer>
+      </Pressable>
     );
   };
   return (
@@ -95,8 +97,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: setYAxisValue(10),
     right: setXAxisValue(30),
-    padding: setValue(3),
+    padding: setValue(2),
+    paddingHorizontal: setXAxisValue(4),
     borderRadius: 99,
-    backgroundColor: Colors.primary
+    backgroundColor: Colors.primary,
+    borderColor: Colors.white,
+    borderWidth: setValue(2)
   }
 });

@@ -4,7 +4,7 @@ import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCar
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import { ChevronRightSvg, SearchSvg } from '../assets/svg';
-import { useStore } from '../stores';
+import { appStore, useStore } from '../stores';
 import { observer } from 'mobx-react-lite';
 import { runInAction } from 'mobx';
 const foodData = [
@@ -85,10 +85,11 @@ const Home = () => {
       });
     }, 3000);
   }, []);
+  const showDrawerMenu = () => appStore.toggleDrawerMenu();
   return (
     <Container disableLast>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.btnMenu}>
+        <TouchableOpacity onPress={showDrawerMenu} style={styles.btnMenu}>
           <Image style={styles.menuIcon} source={require('../assets/images/horizontal-line.png')} />
         </TouchableOpacity>
         <View style={styles.headerTitle}>

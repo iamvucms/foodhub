@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     width: setValue(38),
     height: setValue(38),
     position: 'absolute',
-    top: setYAxisValue(37),
+    top: setYAxisValue(53),
     left: setXAxisValue(27),
     backgroundColor: Colors.white,
     justifyContent: 'center',

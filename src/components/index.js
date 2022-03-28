@@ -14,3 +14,4 @@ export { default as ButtonIcon } from './ButtonIcon';
 export { default as Header } from './Header';
 export { default as CartItem } from './CartItem';
 export { default as CartSummary } from './CartSummary';
+export { default as OrderCard } from './OrderCard';

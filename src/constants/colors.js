@@ -25,5 +25,7 @@ export const Colors = {
   smoky: '#5B5B5E',
   transparent: 'rgba(0,0,0,0)',
   aslo_gray: '#858992',
-  grey_suit: '#9796A1'
+  grey_suit: '#9796A1',
+  app_background: 'rgb(245,245,245)',
+  drawer_icon_color: '#979ba0'
 };

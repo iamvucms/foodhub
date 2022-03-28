@@ -5,7 +5,7 @@ import { Colors } from '../constants/colors';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import FText from './FText';
 import Padding from './Padding';
-const FoodCard = ({ item = data, containerStyle, onPress }) => {
+const FoodCard = ({ item = data, containerStyle, bannerStyle, onPress }) => {
   const imageRef = useRef();
   const onCardPress = React.useCallback(() => {
     imageRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -20,7 +20,7 @@ const FoodCard = ({ item = data, containerStyle, onPress }) => {
   }, []);
   return (
     <Pressable onPress={onCardPress} style={[styles.container, containerStyle]}>
-      <Image ref={imageRef} style={styles.banner} source={{ uri: item.image }} />
+      <Image ref={imageRef} style={[styles.banner, bannerStyle]} source={{ uri: item.image }} />
       <View style={styles.headerInfo}>
         <View style={styles.priceInfo}>
           <FText fontSize={15} lineHeight={15}>

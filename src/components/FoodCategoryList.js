@@ -4,11 +4,18 @@ import { FoodCategories } from '../constants/data';
 import { isAndroid, setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import FText from './FText';
+import { useNavigation } from '@react-navigation/native';
 
 const FoodCategoryList = () => {
+  const navigation = useNavigation();
   const renderFoodCategoryItem = React.useCallback(({ item, index }) => {
+    const onPress = () => {
+      navigation.navigate('CategoryDetail', {
+        categoryId: item.id
+      });
+    };
     return (
-      <TouchableOpacity style={styles.foodCategoryItem}>
+      <TouchableOpacity onPress={onPress} style={styles.foodCategoryItem}>
         <View style={styles.foodCategoryItemIcon}>
           <Image style={styles.categoryImage} source={item.image} />
         </View>

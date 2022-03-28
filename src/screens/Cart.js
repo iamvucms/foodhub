@@ -1,11 +1,12 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Observer, observer } from 'mobx-react-lite';
 import React from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import Animated, { FadeOutDown } from 'react-native-reanimated';
 import { ButtonIcon, CartItem, CartSummary, Container, FText, Header, Padding } from '../components';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
-import { Colors } from '../constants/colors';
 import { useStore } from '../stores';
-import { observer } from 'mobx-react-lite';
+import { setXAxisValue, setYAxisValue } from '../utils';
 const Cart = () => {
+  const cartStore = useStore('cart');
   const renderListHeader = React.useCallback(() => {
     return (
       <React.Fragment>
@@ -23,7 +24,17 @@ const Cart = () => {
       <View style={styles.cartContainer}>
         <CartList renderListHeader={renderListHeader} renderListFooter={renderListFooter} />
       </View>
-      <ButtonIcon text="CHECK OUT" />
+      <Observer>
+        {() => (
+          <React.Fragment>
+            {cartStore.cartItemsTotalAmount > 0 && (
+              <Animated.View exiting={FadeOutDown}>
+                <ButtonIcon text="CHECK OUT" />
+              </Animated.View>
+            )}
+          </React.Fragment>
+        )}
+      </Observer>
     </Container>
   );
 };

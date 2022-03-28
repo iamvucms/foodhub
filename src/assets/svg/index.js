@@ -10,3 +10,4 @@ export { default as ProfileSvg } from './profile';
 export { default as ChevronRightSvg } from './chevron-right';
 export { default as DecrementSvg } from './decrement';
 export { default as IncrementSvg } from './increment';
+export { default as LogoutSvg } from './logout';
