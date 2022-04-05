@@ -1,10 +1,9 @@
+import { PortalProvider } from '@gorhom/portal';
 import React from 'react';
-import AppNavigation, { AnimatedAppNavigation } from './navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { rootStore, StoreProvider, trunk } from './stores';
+import { AnimatedAppNavigation } from './navigation';
 import Loading from './screens/Loading';
-import { StyleSheet, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { rootStore, StoreProvider, trunk } from './stores';
 const App = () => {
   const [dataLoaded, setDataLoaded] = React.useState(false);
   React.useEffect(() => {
@@ -18,14 +17,11 @@ const App = () => {
   }, []);
   return (
     <SafeAreaProvider>
-      <StoreProvider value={rootStore}>{dataLoaded ? <AnimatedAppNavigation /> : <Loading />}</StoreProvider>
+      <StoreProvider value={rootStore}>
+        <PortalProvider>{dataLoaded ? <AnimatedAppNavigation /> : <Loading />}</PortalProvider>
+      </StoreProvider>
     </SafeAreaProvider>
   );
 };
 
 export default App;
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});

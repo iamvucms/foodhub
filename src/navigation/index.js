@@ -13,6 +13,7 @@ import { Colors } from '../constants/colors';
 import { drawerMenus } from '../constants/data';
 import Cart from '../screens/Cart';
 import CategoryDetail from '../screens/CategoryDetail';
+import Discover from '../screens/Discover';
 import FoodDetail from '../screens/FoodDetail';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
@@ -22,7 +23,9 @@ import OTPVerification from '../screens/OTPVerification';
 import PhoneNumber from '../screens/PhoneNumber';
 import Profile from '../screens/Profile';
 import ResetPassword from '../screens/ResetPassword';
-import RestaurantReview from '../screens/RestaurantReview';
+import RestaurantDetail from '../screens/RestaurantDetail';
+import RestaurantReviews from '../screens/RestaurantReviews';
+import RestaurantReview from '../screens/RestaurantReviews';
 import SignUp from '../screens/SignUp';
 import { useStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
@@ -50,6 +53,16 @@ const AppNavigation = React.memo(() => {
       />
       <Stack.Screen name="RestaurantReview" component={RestaurantReview} />
       <Stack.Screen name="CategoryDetail" component={CategoryDetail} />
+      <Stack.Screen
+        options={{
+          gestureEnabled: false,
+          animation: 'none'
+        }}
+        name="RestaurantDetail"
+        component={RestaurantDetail}
+      />
+      <Stack.Screen name="RestaurantReviews" component={RestaurantReviews} />
+      <Stack.Screen name="Discover" component={Discover} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (
@@ -76,10 +89,11 @@ const menuWidth = width * 0.5;
 export const AnimatedAppNavigation = () => {
   const appStore = useStore('app');
   const anim = useSharedValue(0);
-  console.log('re render');
-  autorun(() => {
-    anim.value = withTiming(appStore.drawerMenuVisible ? 1 : 0);
-  });
+  useEffect(() => {
+    autorun(() => {
+      anim.value = withTiming(appStore.drawerMenuVisible ? 1 : 0);
+    });
+  }, []);
   const menuStyle = useAnimatedStyle(
     () => ({
       transform: [

@@ -76,15 +76,8 @@ const foodData = [
     options: []
   }
 ];
-const Home = () => {
-  const userStore = useStore('user');
-  React.useEffect(() => {
-    setTimeout(() => {
-      runInAction(() => {
-        userStore.likes.push(1);
-      });
-    }, 3000);
-  }, []);
+const Home = ({ navigation }) => {
+  const onDiscoverFoodPress = () => navigation.navigate('Discover');
   const showDrawerMenu = () => appStore.toggleDrawerMenu();
   return (
     <Container disableLast>
@@ -115,8 +108,9 @@ const Home = () => {
           to order
         </FText>
         <View style={styles.searchInputContainer}>
-          <Pressable style={{ flex: 1 }}>
+          <Pressable onPress={onDiscoverFoodPress} style={{ flex: 1 }}>
             <FInput
+              onPressIn={onDiscoverFoodPress}
               editable={false}
               placeholder="Find for food or restaurant..."
               icon={<SearchSvg />}

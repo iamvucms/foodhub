@@ -27,5 +27,6 @@ export const Colors = {
   aslo_gray: '#858992',
   grey_suit: '#9796A1',
   app_background: 'rgb(245,245,245)',
-  drawer_icon_color: '#979ba0'
+  drawer_icon_color: '#979ba0',
+  waterloo: '#7F7D92'
 };

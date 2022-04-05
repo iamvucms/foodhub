@@ -4,7 +4,7 @@ import FText from './FText';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 
-const Header = ({ title, onLeftPress }) => {
+const Header = ({ title, onLeftPress, onRightPress, rightIcon }) => {
   return (
     <View style={styles.container}>
       {onLeftPress && (
@@ -15,6 +15,11 @@ const Header = ({ title, onLeftPress }) => {
       <FText lineHeight={20} fontSize={20} fontWeight={600}>
         {title}
       </FText>
+      {onRightPress && (
+        <TouchableOpacity onPress={onRightPress} style={styles.btnRight}>
+          {typeof rightIcon === 'function' ? rightIcon() : rightIcon}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -51,5 +56,14 @@ const styles = StyleSheet.create({
   backIcon: {
     width: setXAxisValue(5),
     height: setYAxisValue(9.5)
+  },
+  btnRight: {
+    height: '100%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    right: 0,
+    zIndex: 99
   }
 });

@@ -6,7 +6,6 @@ const {
   iphoneMaxHeight,
   iphoneMaxWidth
 } = Layout;
-console.log({ width, height });
 export const setYAxisValue = value => {
   const ratio = height / iphoneMaxHeight;
   return ratio > 1 ? value : value * ratio;

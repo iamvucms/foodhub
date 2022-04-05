@@ -99,7 +99,6 @@ const FoodDetail = ({ route, navigation }) => {
     isFocused && onBackPress();
     return true;
   });
-  console.log('render food detail');
   return (
     <Container>
       <View style={styles.container}>

@@ -12,6 +12,7 @@
     "web": "webpack serve --mode=development --config webpack.config.js"
   },
   "dependencies": {
+    "@gorhom/portal": "^1.0.12",
     "@react-native-async-storage/async-storage": "^1.16.2",
     "@react-native-community/hooks": "^2.8.1",
     "@react-navigation/bottom-tabs": "^6.2.0",
@@ -25,6 +26,7 @@
     "mobx-sync": "^3.0.0",
     "react": "17.0.2",
     "react-native": "^0.67.4",
+    "react-native-gesture-handler": "^2.3.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keyboard-spacer": "^0.4.1",
     "react-native-linear-gradient": "^2.5.6",
@@ -34,6 +36,7 @@
     "react-native-svg": "^12.3.0",
     "react-native-web": "^0.17.7",
     "react-native-web-linear-gradient": "^1.1.2",
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "uid": "^2.0.0",
     "uuid": "^8.3.2"
   },
