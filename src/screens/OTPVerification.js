@@ -1,20 +1,28 @@
-import { useNavigation } from '@react-navigation/native';
+import { toJS } from 'mobx';
+import { Observer, useLocalObservable } from 'mobx-react-lite';
 import React from 'react';
 import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import Animated, { BounceIn, BounceOut } from 'react-native-reanimated';
-import { BackButton, Container, FText } from '../components';
+import Animated, { BounceIn } from 'react-native-reanimated';
+import { UserActions } from '../actions';
+import { BackButton, Container, ErrorModal, FText, LoadingIndicatorModal } from '../components';
 import FInput from '../components/FInput';
 import { Colors } from '../constants/colors';
+import { userStore } from '../stores';
 import { isAndroid, setValue, setXAxisValue, setYAxisValue } from '../utils';
 
 const OTPVerification = ({ navigation, route }) => {
   const { username } = route.params || {};
-  const [otp, setOTP] = React.useState('');
+  const state = useLocalObservable(() => ({
+    otp: '',
+    setOTP: e => (state.otp = e)
+  }));
   const inputRef = React.useRef();
   const onResendCodePress = React.useCallback(() => {
     //resend code
+  }, []);
+  const onVerifyPress = React.useCallback(() => {
+    UserActions.verifyOTP({ otp: state.otp });
   }, []);
   return (
     <Container disableFirst>
@@ -35,28 +43,35 @@ const OTPVerification = ({ navigation, route }) => {
             Please type the verification code sent to {username}
           </FText>
         </View>
-        <FInput
-          autoFocus
-          keyboardType="numeric"
-          value={otp}
-          onChangeText={code => code.length <= 4 && setOTP(code)}
-          ref={inputRef}
-          containerStyle={styles.hiddenInput}
-        />
+        <Observer>
+          {() => (
+            <FInput
+              autoFocus
+              keyboardType="numeric"
+              value={state.otp}
+              onChangeText={code => code.length <= 4 && state.setOTP(code)}
+              ref={inputRef}
+              containerStyle={styles.hiddenInput}
+            />
+          )}
+        </Observer>
         <View style={styles.codeInputContainer}>
           {new Array(4).fill(1).map((_, index) => (
-            <Pressable
-              onPress={() => inputRef.current?.focus?.()}
-              key={index}
-              style={[styles.codeInput, index === otp.length && styles.highlight]}>
-              {otp[index] && (
-                <Animated.View entering={BounceIn}>
-                  <FText color={Colors.primary} lineHeightRatio={1.25} fontSize={28}>
-                    {otp[index]}
-                  </FText>
-                </Animated.View>
+            <Observer key={index}>
+              {() => (
+                <Pressable
+                  onPress={() => inputRef.current?.focus?.()}
+                  style={[styles.codeInput, index === state.otp.length && styles.highlight]}>
+                  {state.otp[index] && (
+                    <Animated.View entering={BounceIn}>
+                      <FText color={Colors.primary} lineHeightRatio={1.25} fontSize={28}>
+                        {state.otp[index]}
+                      </FText>
+                    </Animated.View>
+                  )}
+                </Pressable>
               )}
-            </Pressable>
+            </Observer>
           ))}
         </View>
         <View style={styles.alreadyHaveAccount}>
@@ -67,11 +82,19 @@ const OTPVerification = ({ navigation, route }) => {
             </FText>
           </FText>
         </View>
-        <TouchableOpacity style={styles.btnLogin}>
+        <TouchableOpacity onPress={onVerifyPress} style={styles.btnLogin}>
           <FText color={Colors.white} fontWeight="700">
             VERIFY
           </FText>
         </TouchableOpacity>
+        <Observer>{() => userStore.verifyingOTP && <LoadingIndicatorModal />}</Observer>
+        {/* <Observer>
+          {() =>
+            !!userStore.verifyOTPError && (
+              <ErrorModal error={userStore.verifyOTPError} onRequestClose={() => userStore.setVerifyOTPError(null)} />
+            )
+          }
+        </Observer> */}
         {!isAndroid && <KeyboardSpacer />}
       </View>
     </Container>

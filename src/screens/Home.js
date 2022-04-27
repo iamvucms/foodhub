@@ -1,12 +1,14 @@
 import { StyleSheet, TouchableOpacity, Image, View, ScrollView, Pressable } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCarousel } from '../components';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import { ChevronRightSvg, SearchSvg } from '../assets/svg';
-import { appStore, useStore } from '../stores';
-import { observer } from 'mobx-react-lite';
-import { runInAction } from 'mobx';
+import { appStore, userStore, useStore } from '../stores';
+import { Observer, observer } from 'mobx-react-lite';
+import { autorun, runInAction } from 'mobx';
+import { CommonActions } from '@react-navigation/native';
+import userActions from '../actions/userActions';
 const foodData = [
   {
     id: 1,
@@ -77,6 +79,20 @@ const foodData = [
   }
 ];
 const Home = ({ navigation }) => {
+  useEffect(() => {
+    autorun(() => {
+      if (!userStore.logined) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'OnboardingStack' }]
+          })
+        );
+      }
+    });
+    userActions.getUserInformation();
+  }, []);
+  const onAddressPress = () => navigation.navigate('UserAddress');
   const onDiscoverFoodPress = () => navigation.navigate('Discover');
   const showDrawerMenu = () => appStore.toggleDrawerMenu();
   return (
@@ -85,17 +101,25 @@ const Home = ({ navigation }) => {
         <TouchableOpacity onPress={showDrawerMenu} style={styles.btnMenu}>
           <Image style={styles.menuIcon} source={require('../assets/images/horizontal-line.png')} />
         </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <View style={styles.headerTitleLine1}>
-            <FText color={Colors.typography_40} fontSize="small" lineHeightRatio={1.22}>
-              Deliver to{' '}
-            </FText>
-            <Image style={styles.chevronDown} source={require('../assets/images/chevron-down.png')} />
-          </View>
-          <FText numberOfLines={1} fontSize={15} color={Colors.primary}>
-            122, Abc, Xyz
-          </FText>
-        </View>
+        <Pressable onPress={onAddressPress} style={styles.headerTitle}>
+          <Observer>
+            {() => (
+              <React.Fragment>
+                <View style={styles.headerTitleLine1}>
+                  <FText color={Colors.typography_40} fontSize="small" lineHeightRatio={1.22}>
+                    Deliver to{' '}
+                  </FText>
+                  <Image style={styles.chevronDown} source={require('../assets/images/chevron-down.png')} />
+                </View>
+                <FText numberOfLines={1} fontSize={15} color={Colors.primary}>
+                  {userStore.mainAddress
+                    ? `${userStore.mainAddress.street}, ${userStore.mainAddress.district}, ${userStore.mainAddress.province}`
+                    : 'Update Delivery Address'}
+                </FText>
+              </React.Fragment>
+            )}
+          </Observer>
+        </Pressable>
         <TouchableOpacity style={styles.btnMenu}>
           <Image style={styles.avatar} source={{ uri: 'https://www.w3schools.com/howto/img_forest.jpg' }} />
         </TouchableOpacity>

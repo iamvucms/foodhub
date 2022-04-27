@@ -1,15 +1,33 @@
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, FText } from '../components';
 import { Colors } from '../constants/colors';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Layout } from '../constants';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { autorun } from 'mobx';
+import { userStore } from '../stores';
 
 const Onboarding = () => {
   const navigation = useNavigation();
+  useEffect(() => {
+    autorun(() => {
+      if (userStore.logined) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'HomeStack'
+              }
+            ]
+          })
+        );
+      }
+    });
+  }, []);
   const onSignUpPress = React.useCallback(() => {
     navigation.navigate('SignUp');
   }, []);

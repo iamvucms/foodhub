@@ -19,3 +19,5 @@ export { default as RestaurantCarousel } from './RestaurantCarousel';
 export { default as ReviewCard } from './ReviewCard';
 export { default as BottomSheet } from './BottomSheet';
 export { default as RestaurantMiniCard } from './RestaurantMiniCard';
+export { default as LoadingIndicatorModal } from './LoadingIndicatorModal';
+export { default as ErrorModal } from './ErrorModal';

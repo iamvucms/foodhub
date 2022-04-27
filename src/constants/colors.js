@@ -4,6 +4,7 @@ export const Colors = {
   primary_60: '#FE907C',
   primary_40: '#FEA09F',
   primary_20: '#FEB2C2',
+  primary_overlay: 'rgba(254, 114, 76, 0.25)',
   secondary: '#FFC529',
   secondary_80: '#FFD54F',
   secondary_60: '#FFE082',
@@ -28,5 +29,7 @@ export const Colors = {
   grey_suit: '#9796A1',
   app_background: 'rgb(245,245,245)',
   drawer_icon_color: '#979ba0',
-  waterloo: '#7F7D92'
+  waterloo: '#7F7D92',
+  black_50: 'rgba(0,0,0,0.5)',
+  black_75: 'rgba(0,0,0,0.75)'
 };

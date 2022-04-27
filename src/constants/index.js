@@ -1,6 +1,6 @@
-import {Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const iphoneMaxWidth = 375;
 
@@ -9,8 +9,9 @@ export const imageSize = 1080;
 export const Layout = {
   window: {
     width,
-    height,
+    height
   },
   iphoneMaxWidth,
-  iphoneMaxHeight,
+  iphoneMaxHeight
 };
+export * from './axios';

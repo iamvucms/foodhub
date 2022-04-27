@@ -1,20 +1,41 @@
 import { StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import React from 'react';
-import { BackButton, Container, FText } from '../components';
+import { BackButton, BottomSheet, Container, ErrorModal, FText, LoadingIndicatorModal } from '../components';
 import { Layout } from '../constants';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import FInput from '../components/FInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useNavigation } from '@react-navigation/native';
+import { Observer, useLocalObservable } from 'mobx-react-lite';
+import { UserActions } from '../actions';
+import { userStore } from '../stores';
 
 const SignUp = () => {
   const navigation = useNavigation();
-  const [fullname, setFullname] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [email, setEmail] = React.useState('');
+  const state = useLocalObservable(() => ({
+    fullname: '',
+    setFullname: e => (state.fullname = e),
+    password: '',
+    setPassword: e => (state.password = e),
+    email: '',
+    setEmail: e => (state.email = e)
+  }));
   const onLoginPress = React.useCallback(() => {
     navigation.navigate('Login');
+  }, []);
+  const onSignUpPress = React.useCallback(() => {
+    const onSuccess = () => {
+      navigation.navigate('OTPVerification');
+    };
+    UserActions.registerUser(
+      {
+        name: state.fullname,
+        emailOrPhone: state.email,
+        password: state.password
+      },
+      onSuccess
+    );
   }, []);
   return (
     <Container disableFirst>
@@ -31,30 +52,42 @@ const SignUp = () => {
           <FText fontWeight="800" fontSize="h4" lineHeightRatio={1.2}>
             Sign Up
           </FText>
-          <FInput
-            onChangeText={setFullname}
-            value={fullname}
-            containerStyle={styles.inputContainer}
-            title="Full name"
-            placeholder="Enter your full name"
-          />
-          <FInput
-            onChangeText={setEmail}
-            value={email}
-            containerStyle={styles.inputContainer}
-            title="E-mail"
-            placeholder="Enter your E-mail"
-          />
-          <FInput
-            onChangeText={setPassword}
-            value={password}
-            containerStyle={styles.inputContainer}
-            isPassword
-            title="Password"
-            placeholder="Enter your password"
-          />
+          <Observer>
+            {() => (
+              <FInput
+                onChangeText={e => state.setFullname(e)}
+                value={state.fullname}
+                containerStyle={styles.inputContainer}
+                title="Full name"
+                placeholder="Enter your full name"
+              />
+            )}
+          </Observer>
+          <Observer>
+            {() => (
+              <FInput
+                onChangeText={e => state.setEmail(e)}
+                value={state.email}
+                containerStyle={styles.inputContainer}
+                title="E-mail"
+                placeholder="Enter your E-mail or Phone number"
+              />
+            )}
+          </Observer>
+          <Observer>
+            {() => (
+              <FInput
+                onChangeText={e => state.setPassword(e)}
+                value={state.password}
+                containerStyle={styles.inputContainer}
+                isPassword
+                title="Password"
+                placeholder="Enter your password"
+              />
+            )}
+          </Observer>
         </View>
-        <TouchableOpacity style={styles.btnSignUp}>
+        <TouchableOpacity onPress={onSignUpPress} style={styles.btnSignUp}>
           <FText color={Colors.white} fontWeight="700">
             SIGN UP
           </FText>
@@ -86,6 +119,12 @@ const SignUp = () => {
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
+      <Observer>{() => userStore.signingUp && <LoadingIndicatorModal />}</Observer>
+      <Observer>
+        {() =>
+          !!userStore.signUpError && <ErrorModal error={userStore.signUpError} onRequestClose={() => userStore.setSignUpError(null)} />
+        }
+      </Observer>
     </Container>
   );
 };

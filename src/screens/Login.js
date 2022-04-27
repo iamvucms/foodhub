@@ -1,10 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
+import { Observer } from 'mobx-react-lite';
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { BackButton, Container, FText } from '../components';
+import { UserActions } from '../actions';
+import { BackButton, Container, ErrorModal, FText, LoadingIndicatorModal } from '../components';
 import FInput from '../components/FInput';
 import { Colors } from '../constants/colors';
+import { userStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 
 const Login = () => {
@@ -19,8 +22,9 @@ const Login = () => {
   }, []);
   const onNextPress = React.useCallback(() => {
     //action
-    navigation.navigate('OTPVerification', {
-      username
+    UserActions.loginUser({
+      emailOrPhone: username,
+      password
     });
   }, [username, password]);
   return (
@@ -96,6 +100,10 @@ const Login = () => {
           </FText>
         </View>
       </KeyboardAwareScrollView>
+      <Observer>{() => userStore.loggingIn && <LoadingIndicatorModal />}</Observer>
+      <Observer>
+        {() => !!userStore.logInError && <ErrorModal error={userStore.logInError} onRequestClose={() => userStore.setLogInError(null)} />}
+      </Observer>
     </Container>
   );
 };

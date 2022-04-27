@@ -6,6 +6,7 @@ import { Observer, observer } from 'mobx-react-lite';
 import React, { useEffect } from 'react';
 import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import userActions from '../actions/userActions';
 import { LogoutSvg } from '../assets/svg';
 import { BottomTabBar, FText, Padding } from '../components';
 import { Layout } from '../constants';
@@ -27,7 +28,8 @@ import RestaurantDetail from '../screens/RestaurantDetail';
 import RestaurantReviews from '../screens/RestaurantReviews';
 import RestaurantReview from '../screens/RestaurantReviews';
 import SignUp from '../screens/SignUp';
-import { useStore } from '../stores';
+import UserAddress from '../screens/UserAddress';
+import { appStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { config } from './config';
 const Stack = createNativeStackNavigator();
@@ -63,6 +65,7 @@ const AppNavigation = React.memo(() => {
       />
       <Stack.Screen name="RestaurantReviews" component={RestaurantReviews} />
       <Stack.Screen name="Discover" component={Discover} />
+      <Stack.Screen name="UserAddress" component={UserAddress} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (
@@ -78,7 +81,7 @@ const AppNavigation = React.memo(() => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={config}>
-        {/* <Stack.Screen name="OnboardingStack" component={OnboardingStack} /> */}
+        <Stack.Screen name="OnboardingStack" component={OnboardingStack} />
         <Stack.Screen name="HomeStack" component={HomeStack} />
       </Stack.Navigator>
     </NavigationContainer>
@@ -87,7 +90,6 @@ const AppNavigation = React.memo(() => {
 const { width } = Layout.window;
 const menuWidth = width * 0.5;
 export const AnimatedAppNavigation = () => {
-  const appStore = useStore('app');
   const anim = useSharedValue(0);
   useEffect(() => {
     autorun(() => {
@@ -143,7 +145,12 @@ export const AnimatedAppNavigation = () => {
           vuzero007@gmail.com
         </FText>
         <View style={styles.menuList}>{drawerMenus.map(renderMenuItem)}</View>
-        <TouchableOpacity style={styles.btnLogout}>
+        <TouchableOpacity
+          onPress={() => {
+            appStore.toggleDrawerMenu();
+            userActions.logout();
+          }}
+          style={styles.btnLogout}>
           <View style={styles.logoutIcon}>
             <LogoutSvg />
           </View>
