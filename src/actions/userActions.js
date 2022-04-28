@@ -1,6 +1,7 @@
 import { baseAuthUrl, baseUrl } from '../constants';
+import { navigation } from '../navigation/navigationRef';
 import { userStore } from '../stores';
-import { get, post, storeItem } from '../utils';
+import { get, post, postDelete, storeItem } from '../utils';
 const registerUser = async ({ name, password, emailOrPhone }, onRegister) => {
   userStore.setSigningUp(true);
   const response = await post(`${baseAuthUrl}/register`, {
@@ -69,13 +70,48 @@ const markAddressAsMain = async ({ address }) => {
   userStore.selectMainAddress(address.id);
   const response = await post(`${baseUrl}/address/${address.id}`, {
     address: {
-      selected: true,
-      user_id: userStore.user.user_id
+      selected: true
     }
   });
   if (!response.success) {
     console.log(response.error);
   }
+};
+const addAddress = async ({ address }) => {
+  userStore.setAddingAddress(true);
+  const response = await post(`${baseUrl}/address`, {
+    address: {
+      ...address,
+      user_id: userStore.user.user_id
+    }
+  });
+  if (response.success) {
+    userStore.setAddresses(response.data);
+    navigation.navigate('UserAddress');
+  } else {
+    userStore.setAddAddressError(response.error);
+  }
+  userStore.setAddingAddress(false);
+};
+const removeAddress = async ({ addressId }) => {
+  const response = await postDelete(`${baseUrl}/address/${addressId}`);
+  console.log(response);
+  if (response.success) {
+    userStore.removeAddress(addressId);
+  }
+};
+const updateAddress = async ({ address }) => {
+  userStore.setAddingAddress(true);
+  const response = await post(`${baseUrl}/address/${address.id}`, {
+    address
+  });
+  if (response.success) {
+    userStore.updateAddress(address);
+    navigation.navigate('UserAddress');
+  } else {
+    userStore.setAddAddressError(response.error);
+  }
+  userStore.setAddingAddress(false);
 };
 const getUserInformation = async () => {
   const listOfActions = [getAddresses];
@@ -88,5 +124,8 @@ export default {
   verifyOTP,
   getAddresses,
   markAddressAsMain,
+  addAddress,
+  removeAddress,
+  updateAddress,
   getUserInformation
 };

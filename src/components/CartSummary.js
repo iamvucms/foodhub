@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import FText from './FText';
 import Padding from './Padding';
@@ -6,16 +6,23 @@ import { Colors } from '../constants/colors';
 import { setValue, setYAxisValue } from '../utils';
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../stores';
+import { Layout } from '../constants';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 const CartSummary = observer(() => {
   const cartStore = useStore('cart');
   const isEmpty = cartStore.cartItems.length === 0;
   if (isEmpty) {
     return (
-      <View>
-        <FText fontSize={14} color={Colors.aslo_gray}>
-          Your cart is now empty
-        </FText>
+      <View style={{ flex: 1 }}>
+        <View style={styles.emptyCartContainer}>
+          <Animated.View entering={FadeInDown}>
+            <Image style={styles.emptyCart} source={require('../assets/images/empty-cart.png')} />
+          </Animated.View>
+          <FText fontSize={14} color={Colors.aslo_gray}>
+            Your cart is now empty
+          </FText>
+        </View>
       </View>
     );
   }
@@ -91,5 +98,15 @@ const styles = StyleSheet.create({
   },
   deliveryInfo: {
     paddingVertical: setYAxisValue(17)
+  },
+  emptyCartContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: Layout.window.height / 2
+  },
+  emptyCart: {
+    marginBottom: setYAxisValue(15),
+    width: setValue(80),
+    height: setValue(80)
   }
 });

@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { autorun } from 'mobx';
 import { Observer, observer } from 'mobx-react-lite';
@@ -12,6 +12,8 @@ import { BottomTabBar, FText, Padding } from '../components';
 import { Layout } from '../constants';
 import { Colors } from '../constants/colors';
 import { drawerMenus } from '../constants/data';
+import AddAddress from '../screens/AddAddress';
+import AddressProvinceAndDistrict from '../screens/AddressProvinceAndDistrict';
 import Cart from '../screens/Cart';
 import CategoryDetail from '../screens/CategoryDetail';
 import Discover from '../screens/Discover';
@@ -29,9 +31,10 @@ import RestaurantReviews from '../screens/RestaurantReviews';
 import RestaurantReview from '../screens/RestaurantReviews';
 import SignUp from '../screens/SignUp';
 import UserAddress from '../screens/UserAddress';
-import { appStore } from '../stores';
+import { appStore, userStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { config } from './config';
+import { navigation, navigationRef } from './navigationRef';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const AppNavigation = React.memo(() => {
@@ -66,6 +69,8 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="RestaurantReviews" component={RestaurantReviews} />
       <Stack.Screen name="Discover" component={Discover} />
       <Stack.Screen name="UserAddress" component={UserAddress} />
+      <Stack.Screen name="AddAddress" component={AddAddress} />
+      <Stack.Screen name="AddressProvinceAndDistrict" component={AddressProvinceAndDistrict} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (
@@ -79,7 +84,7 @@ const AppNavigation = React.memo(() => {
     </Stack.Navigator>
   );
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={config}>
         <Stack.Screen name="OnboardingStack" component={OnboardingStack} />
         <Stack.Screen name="HomeStack" component={HomeStack} />
@@ -119,14 +124,22 @@ export const AnimatedAppNavigation = () => {
     }),
     []
   );
-  const renderMenuItem = item => (
-    <TouchableOpacity key={item.routeName} style={styles.btnMenu}>
-      <View style={styles.menuIcon}>
-        {item.iconSrc ? <Image style={styles.icon} source={item.iconSrc} /> : <item.iconComponent color={Colors.drawer_icon_color} />}
-      </View>
-      <FText>{item.name}</FText>
-    </TouchableOpacity>
-  );
+  const renderMenuItem = item => {
+    const onPress = () => {
+      appStore.toggleDrawerMenu();
+      setTimeout(() => {
+        navigation.navigate(item.routeName);
+      }, 500);
+    };
+    return (
+      <TouchableOpacity onPress={onPress} key={item.routeName} style={styles.btnMenu}>
+        <View style={styles.menuIcon}>
+          {item.iconSrc ? <Image style={styles.icon} source={item.iconSrc} /> : <item.iconComponent color={Colors.drawer_icon_color} />}
+        </View>
+        <FText>{item.name}</FText>
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.menuContainer, menuStyle]}>

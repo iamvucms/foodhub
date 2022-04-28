@@ -1,18 +1,41 @@
 import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { Container, FText, Header, Padding } from '../components';
+import { ConfirmModal, Container, FText, Header, Padding } from '../components';
 import { userStore } from '../stores';
-import { Observer } from 'mobx-react-lite';
+import { Observer, useLocalObservable } from 'mobx-react-lite';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import Animated, { BounceIn } from 'react-native-reanimated';
 import { UserActions } from '../actions';
+import { toJS } from 'mobx';
 const UserAddress = ({ navigation }) => {
-  const address = userStore.addresses.slice();
+  const confirmRef = React.useRef(null);
+
+  const state = useLocalObservable(() => ({
+    selectedAddress: null,
+    setSelectedAddress: address => (state.selectedAddress = address)
+  }));
   const onBackPress = () => navigation.goBack();
+  const onConfirmRemoveAddress = () => {
+    if (state.selectedAddress) {
+      UserActions.removeAddress({
+        addressId: state.selectedAddress.id
+      });
+    }
+  };
   const renderAddressItem = ({ item }) => (
     <Observer>
       {() => {
+        const onRemovePress = () => {
+          confirmRef.current?.snapTo?.(1);
+          state.setSelectedAddress(item);
+        };
+        const onEditPress = () => {
+          navigation.navigate('AddAddress', {
+            address: toJS(item),
+            isEdit: true
+          });
+        };
         const selected = item.selected;
         const onPress = () => UserActions.markAddressAsMain({ address: item });
         return (
@@ -29,9 +52,16 @@ const UserAddress = ({ navigation }) => {
             </View>
             <View style={{ flex: 1 }}>
               <View style={styles.addressName}>
-                <FText fontSize={15}>Nguyen Hoang Vu</FText>
-                <TouchableOpacity style={styles.btnEdit}>
-                  <Image style={styles.penIcon} source={require('../assets/images/pen.png')} />
+                <FText fontSize={15}>{item.name}</FText>
+                <TouchableOpacity onPress={onEditPress} style={styles.btnAction}>
+                  <FText fontSize={13} color={Colors.primary}>
+                    Edit
+                  </FText>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={onRemovePress} style={styles.btnAction}>
+                  <FText fontSize={13} color={Colors.primary}>
+                    Remove
+                  </FText>
                 </TouchableOpacity>
               </View>
               <Padding paddingTop={5} />
@@ -44,15 +74,18 @@ const UserAddress = ({ navigation }) => {
       }}
     </Observer>
   );
-  const renderAddButton = () => (
-    <TouchableOpacity style={styles.btnAddress}>
-      <Image style={styles.icon} source={require('../assets/images/gps.png')} />
-      <Padding paddingLeft={5} />
-      <FText fontSize={15} color={Colors.white}>
-        Add new address
-      </FText>
-    </TouchableOpacity>
-  );
+  const renderAddButton = () => {
+    const onPress = () => navigation.navigate('AddAddress');
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.btnAddress}>
+        <Image style={styles.icon} source={require('../assets/images/gps.png')} />
+        <Padding paddingLeft={5} />
+        <FText fontSize={15} color={Colors.white}>
+          Add new address
+        </FText>
+      </TouchableOpacity>
+    );
+  };
   const renderListEmptyComponent = () => (
     <Padding paddingHorizontal={26} paddingVertical={20}>
       <FText align="center" fontSize={15} color={Colors.smoky}>
@@ -67,12 +100,17 @@ const UserAddress = ({ navigation }) => {
         <Padding paddingHorizontal={26} paddingBottom={15}>
           <FText fontSize="medium">Your Delivery Address</FText>
         </Padding>
-        <FlatList
-          ListEmptyComponent={renderListEmptyComponent}
-          ListFooterComponent={renderAddButton}
-          data={address}
-          renderItem={renderAddressItem}
-        />
+        <Observer>
+          {() => (
+            <FlatList
+              ListEmptyComponent={renderListEmptyComponent}
+              ListFooterComponent={renderAddButton}
+              data={userStore.addresses.slice()}
+              renderItem={renderAddressItem}
+            />
+          )}
+        </Observer>
+        <ConfirmModal onConfirm={onConfirmRemoveAddress} ref={confirmRef} title="Are you sure you want to remove this address?" />
       </View>
     </Container>
   );
@@ -143,12 +181,7 @@ const styles = StyleSheet.create({
     width: setValue(15),
     height: setValue(15)
   },
-  btnEdit: {
-    paddingHorizontal: setXAxisValue(5),
-    transform: [
-      {
-        translateY: setValue(-3)
-      }
-    ]
+  btnAction: {
+    marginLeft: setXAxisValue(7.5)
   }
 });

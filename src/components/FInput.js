@@ -22,7 +22,7 @@ const FInput = React.forwardRef(
       };
     });
     return (
-      <View style={[containerStyle, { flex: 1 }]}>
+      <View style={[containerStyle]}>
         {title && (
           <FText style={styles.title} color={Colors.typography_60}>
             {title}
@@ -64,7 +64,6 @@ export default React.memo(FInput);
 
 const styles = StyleSheet.create({
   inputContainerBase: {
-    flex: 1,
     height: setYAxisValue(65),
     borderRadius: setValue(10),
     borderColor: Colors.border,

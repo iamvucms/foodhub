@@ -10,9 +10,20 @@ class UserStore {
   logInError = null;
   verifyingOTP = false;
   verifyOTPError = null;
+  addingAddress = false;
+  addAddressError = null;
   addresses = [];
   constructor() {
-    ignorePersistNodes(this, ['signingUp', 'signUpError', 'loggingIn', 'logInError', 'verifyingOTP', 'verifyOTPError']);
+    ignorePersistNodes(this, [
+      'signingUp',
+      'signUpError',
+      'loggingIn',
+      'logInError',
+      'verifyingOTP',
+      'verifyOTPError',
+      'addingAddress',
+      'addAddressError'
+    ]);
     makeObservable(this, {
       user: observable,
       logined: observable,
@@ -23,6 +34,8 @@ class UserStore {
       verifyingOTP: observable,
       verifyOTPError: observable,
       addresses: observable,
+      addingAddress: observable,
+      addAddressError: observable,
       setUser: action,
       setLogined: action,
       setSignUpError: action,
@@ -33,6 +46,11 @@ class UserStore {
       setVerifyOTPError: action,
       setAddresses: action,
       selectMainAddress: action,
+      addAddress: action,
+      removeAddress: action,
+      updateAddress: action,
+      setAddingAddress: action,
+      setAddAddressError: action,
       mainAddress: computed
     });
   }
@@ -63,6 +81,33 @@ class UserStore {
   }
   setAddresses(addresses) {
     this.addresses = addresses;
+  }
+  addAddress(address) {
+    this.addresses.push(address);
+  }
+  removeAddress(addressId) {
+    const address = this.addresses.find(address => address.id === addressId);
+    const selected = address.selected;
+    this.addresses = this.addresses.filter(address => address.id !== addressId);
+    const lastAddress = this.addresses[this.addresses.length - 1];
+    if (lastAddress && selected) {
+      lastAddress.selected = true;
+    }
+  }
+  updateAddress(address) {
+    const index = this.addresses.findIndex(x => x.id === address.id);
+    if (index > -1) {
+      this.addresses[index] = {
+        ...this.addresses[index],
+        ...address
+      };
+    }
+  }
+  setAddingAddress(addingAddress) {
+    this.addingAddress = addingAddress;
+  }
+  setAddAddressError(addAddressError) {
+    this.addAddressError = addAddressError;
   }
   selectMainAddress(address_id) {
     this.addresses.forEach(address => {

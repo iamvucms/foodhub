@@ -12,6 +12,7 @@ import { userStore } from '../stores';
 
 const Onboarding = () => {
   const navigation = useNavigation();
+
   useEffect(() => {
     autorun(() => {
       if (userStore.logined) {
@@ -35,6 +36,19 @@ const Onboarding = () => {
     navigation.navigate('Login');
   });
   const { bottom } = useSafeAreaInsets();
+  if (userStore.logined) {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'HomeStack'
+          }
+        ]
+      })
+    );
+    return null;
+  }
   return (
     <Container disableFirst disableLast>
       <View style={styles.backgroundContainer}>

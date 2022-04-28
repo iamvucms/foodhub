@@ -21,3 +21,4 @@ export { default as BottomSheet } from './BottomSheet';
 export { default as RestaurantMiniCard } from './RestaurantMiniCard';
 export { default as LoadingIndicatorModal } from './LoadingIndicatorModal';
 export { default as ErrorModal } from './ErrorModal';
+export { default as ConfirmModal } from './ConfirmModal';

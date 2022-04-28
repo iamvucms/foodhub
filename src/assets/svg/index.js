@@ -11,3 +11,5 @@ export { default as ChevronRightSvg } from './chevron-right';
 export { default as DecrementSvg } from './decrement';
 export { default as IncrementSvg } from './increment';
 export { default as LogoutSvg } from './logout';
+export { default as ArrowLeftSvg } from './arrow-left';
+export { default as CheckSvg } from './check';

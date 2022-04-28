@@ -75,7 +75,7 @@ export const drawerMenus = [
   },
   {
     name: 'Delivery Address',
-    routeName: 'DeliveryAddress',
+    routeName: 'UserAddress',
     iconComponent: GpsSvg
   },
   {
