@@ -1,0 +1,29 @@
+import { action, makeAutoObservable, makeObservable, observable } from 'mobx';
+import { ignorePersistNodes } from '../utils';
+
+class HomeStore {
+  products = [];
+  restaurants = [];
+  constructor() {
+    makeAutoObservable(this);
+  }
+  setFavoriteRestaurant(restaurantId, favorite) {
+    const restaurant = this.restaurants.find(r => r.id === restaurantId);
+    if (restaurant) {
+      restaurant.favorite = favorite;
+    }
+  }
+  setFavoriteProduct(productId, favorite) {
+    const product = this.products.find(p => p.id === productId);
+    if (product) {
+      product.favorite = favorite;
+    }
+  }
+  setRestaurants(restaurants) {
+    this.restaurants = restaurants;
+  }
+  setProducts(products) {
+    this.products = products;
+  }
+}
+export default HomeStore;

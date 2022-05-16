@@ -20,7 +20,7 @@ const AddAddress = ({ navigation, route }) => {
     province: isEdit ? editAddress.province : '',
     district_id: '',
     province_id: '',
-    phone_number: isEdit ? editAddress.phone_number : '',
+    phone_number: isEdit ? `${editAddress.phone_number}` : '',
     selected: isEdit ? editAddress.selected : false,
     setName: name => (state.name = name),
     setStreet: street => (state.street = street),
@@ -76,7 +76,7 @@ const AddAddress = ({ navigation, route }) => {
   };
   return (
     <Container>
-      <Header title="New Address" onLeftPress={onBackPress} />
+      <Header title={isEdit ? 'Update Address' : 'New Address'} onLeftPress={onBackPress} />
       <KeyboardAwareScrollView style={styles.container}>
         <Observer>
           {() => (

@@ -3,8 +3,10 @@ import React from 'react';
 import FoodCard from './FoodCard';
 import { setXAxisValue, setYAxisValue } from '../utils';
 import { useNavigation } from '@react-navigation/native';
+import { homeStore } from '../stores';
+import { Observer } from 'mobx-react-lite';
 
-const FoodCarousel = ({ data = [], cardStyle, ...flatlistProps }) => {
+const FoodCarousel = ({ cardStyle, ...flatlistProps }) => {
   const navigation = useNavigation();
   const onItemPress = React.useCallback((item, image) => {
     navigation.navigate('FoodDetail', { data: item, image });
@@ -13,14 +15,18 @@ const FoodCarousel = ({ data = [], cardStyle, ...flatlistProps }) => {
     return <FoodCard onPress={onItemPress} item={item} containerStyle={[styles.foodItem, cardStyle]} />;
   }, []);
   return (
-    <FlatList
-      style={{ overflow: 'visible' }}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      data={data}
-      renderItem={renderRestaurantItem}
-      {...flatlistProps}
-    />
+    <Observer>
+      {() => (
+        <FlatList
+          style={{ overflow: 'visible' }}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={homeStore.products.slice()}
+          renderItem={renderRestaurantItem}
+          {...flatlistProps}
+        />
+      )}
+    </Observer>
   );
 };
 

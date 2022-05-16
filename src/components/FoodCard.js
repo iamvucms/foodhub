@@ -1,5 +1,7 @@
+import { Observer } from 'mobx-react-lite';
 import React, { useRef } from 'react';
 import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { UserActions } from '../actions';
 import { HeartSvg, StarSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
@@ -30,17 +32,36 @@ const FoodCard = ({ item = data, containerStyle, bannerStyle, onPress }) => {
             {item.price}
           </FText>
         </View>
-        <TouchableOpacity style={styles.btnFav}>
-          <HeartSvg color={Colors.white} size={15} />
-        </TouchableOpacity>
+        <Observer>
+          {() => {
+            const isFav = item.favorite;
+            const onPress = () => {
+              UserActions.toggleFavoriteProduct({
+                productId: item.id
+              });
+            };
+            return (
+              <TouchableOpacity
+                onPress={onPress}
+                style={[
+                  styles.btnFav,
+                  isFav && {
+                    backgroundColor: Colors.primary
+                  }
+                ]}>
+                <HeartSvg color={Colors.white} size={15} />
+              </TouchableOpacity>
+            );
+          }}
+        </Observer>
       </View>
       <View style={styles.reviewInfo}>
         <FText fontSize={12} lineHeight={12}>
-          {item.avgRate}{' '}
+          {item.avg_rating || '--'}{' '}
         </FText>
         <StarSvg color={Colors.secondary} />
         <FText color={Colors.typography_20} fontSize={8.5} lineHeight={10}>
-          {'  '}({`${item.totalReviews}+`})
+          {'  '}({`${item.total_reviews}+`})
         </FText>
       </View>
       <View style={styles.infoContainer}>
@@ -49,7 +70,7 @@ const FoodCard = ({ item = data, containerStyle, bannerStyle, onPress }) => {
         </FText>
         <Padding paddingTop={5} />
         <FText fontSize={13} color={Colors.smoky}>
-          {item.short_description}
+          {item.category_name}
         </FText>
       </View>
     </Pressable>
@@ -87,7 +108,7 @@ const styles = StyleSheet.create({
     height: setValue(34),
     width: setValue(34),
     borderRadius: setValue(17),
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.gray,
     justifyContent: 'center',
     alignItems: 'center'
   },

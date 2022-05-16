@@ -1,6 +1,6 @@
 import { baseAuthUrl, baseUrl } from '../constants';
 import { navigation } from '../navigation/navigationRef';
-import { userStore } from '../stores';
+import { homeStore, restaurantStore, userStore } from '../stores';
 import { get, post, postDelete, storeItem } from '../utils';
 const registerUser = async ({ name, password, emailOrPhone }, onRegister) => {
   userStore.setSigningUp(true);
@@ -60,7 +60,7 @@ const verifyOTP = async ({ otp }) => {
   }
   userStore.setVerifyingOTP(false);
 };
-const getAddresses = async () => {
+const fetchAddresses = async () => {
   const response = await get(`${baseUrl}/address`);
   if (response.success) {
     userStore.setAddresses(response.data);
@@ -113,19 +113,35 @@ const updateAddress = async ({ address }) => {
   }
   userStore.setAddingAddress(false);
 };
-const getUserInformation = async () => {
-  const listOfActions = [getAddresses];
-  listOfActions.forEach(action => action());
+const toggleFavoriteRestaurant = ({ restaurantId }) => {
+  const isFavorite = userStore.getIsFavoriteRestaurant(restaurantId);
+  restaurantStore.setFavoriteRestaurant(restaurantId, !isFavorite);
+  homeStore.setFavoriteRestaurant(restaurantId, !isFavorite);
+  const userStoreAction = isFavorite ? 'removeFavoriteRestaurant' : 'addFavoriteRestaurant';
+  userStore[userStoreAction](restaurantId);
+};
+const toggleFavoriteProduct = ({ productId }) => {
+  const isFavorite = userStore.getIsFavoriteProduct(productId);
+  restaurantStore.setFavoriteProduct(productId, !isFavorite);
+  homeStore.setFavoriteProduct(productId, !isFavorite);
+  const userStoreAction = isFavorite ? 'removeFavoriteProduct' : 'addFavoriteProduct';
+  userStore[userStoreAction](productId);
+};
+const fetchUserInformation = async () => {
+  const listOfActions = [fetchAddresses];
+  return await Promise.all(listOfActions.map(action => action()));
 };
 export default {
   registerUser,
   loginUser,
   logout,
   verifyOTP,
-  getAddresses,
+  fetchAddresses,
   markAddressAsMain,
   addAddress,
   removeAddress,
   updateAddress,
-  getUserInformation
+  toggleFavoriteRestaurant,
+  toggleFavoriteProduct,
+  fetchUserInformation
 };

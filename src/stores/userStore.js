@@ -13,6 +13,8 @@ class UserStore {
   addingAddress = false;
   addAddressError = null;
   addresses = [];
+  favoriteRestaurants = {};
+  favoriteProducts = {};
   constructor() {
     ignorePersistNodes(this, [
       'signingUp',
@@ -36,6 +38,8 @@ class UserStore {
       addresses: observable,
       addingAddress: observable,
       addAddressError: observable,
+      favoriteRestaurants: observable,
+      favoriteProducts: observable,
       setUser: action,
       setLogined: action,
       setSignUpError: action,
@@ -51,6 +55,10 @@ class UserStore {
       updateAddress: action,
       setAddingAddress: action,
       setAddAddressError: action,
+      addFavoriteRestaurant: action,
+      removeFavoriteRestaurant: action,
+      addFavoriteProduct: action,
+      removeFavoriteProduct: action,
       mainAddress: computed
     });
   }
@@ -117,6 +125,31 @@ class UserStore {
         address.selected = false;
       }
     });
+  }
+  addFavoriteRestaurant(restaurantId) {
+    this.favoriteRestaurants = {
+      ...this.favoriteRestaurants,
+      [restaurantId]: true
+    };
+    console.log(this.favoriteRestaurants);
+  }
+  removeFavoriteRestaurant(restaurantId) {
+    delete this.favoriteRestaurants[restaurantId];
+  }
+  addFavoriteProduct(productId) {
+    this.favoriteProducts = {
+      ...this.favoriteProducts,
+      [productId]: true
+    };
+  }
+  removeFavoriteProduct(productId) {
+    delete this.favoriteProducts[productId];
+  }
+  getIsFavoriteRestaurant(restaurantId) {
+    return !!this.favoriteRestaurants[restaurantId];
+  }
+  getIsFavoriteProduct(productId) {
+    return this.favoriteProducts[productId];
   }
   get mainAddress() {
     return this.addresses.find(address => address.selected);

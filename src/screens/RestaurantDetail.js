@@ -1,13 +1,17 @@
-import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { Container, FoodCard, FoodCarousel, FText, ListPicker, Padding } from '../components';
-import Animated, { BounceIn, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { BounceIn, BounceOut, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Layout } from '../constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import { StarSvg } from '../assets/svg';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
+import { toJS } from 'mobx';
+import { restaurantStore } from '../stores';
+import { RestaurantActions } from '../actions';
+import { FoodCategories } from '../constants/data';
 const foodData = [
   {
     id: 1,
@@ -102,16 +106,17 @@ const targetY = 0;
 const paddingLeft = setXAxisValue(26);
 const RestaurantDetail = ({ navigation, route }) => {
   const {
-    data,
     image: { x, y, width: imgWidth, height: imgHeight }
   } = route.params;
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const animHeader = useSharedValue(0);
   const localState = useLocalObservable(() => ({
     category: 'All',
+    categoryId: null,
     setCategory: category => {
       localState.category = category;
     },
+    setCategoryId: categoryId => (localState.categoryId = categoryId),
     get filterdFoodItems() {
       return foodData.filter(item => {
         if (localState.category === 'All') {
@@ -131,8 +136,44 @@ const RestaurantDetail = ({ navigation, route }) => {
   };
   const onSeeReviewPress = () =>
     navigation.navigate('RestaurantReviews', {
-      data
+      data: toJS(restaurantStore.restaurant)
     });
+  const onCategoryChange = category => {
+    const findCategory = FoodCategories.find(x => x.name === category);
+    if (findCategory) {
+      localState.setCategory(category);
+      localState.setCategoryId(findCategory.id);
+      RestaurantActions.fetchRestaurantCategoryProducts({
+        categoryId: findCategory.id,
+        restaurantId: restaurantStore.restaurant.id
+      });
+    } else {
+      localState.setCategory('All');
+      localState.setCategoryId(null);
+      RestaurantActions.fetchRestaurantCategoryProducts({
+        restaurantId: restaurantStore.restaurant.id
+      });
+    }
+  };
+  const onFetchMoreCategoryProducts = React.useCallback(() => {
+    if (restaurantStore.fetchingMoreCategoryProducts) {
+      return;
+    }
+    RestaurantActions.fetchRestaurantCategoryProducts({
+      categoryId: localState.categoryId,
+      restaurantId: restaurantStore.restaurant.id,
+      isFetchMore: true
+    });
+  }, []);
+  const onFetchMoreFeatureProducts = React.useCallback(() => {
+    if (restaurantStore.fetchingMoreProducts) {
+      return;
+    }
+    RestaurantActions.fetchRestaurantProducts({
+      restaurantId: restaurantStore.restaurant.id,
+      isFetchMore: true
+    });
+  }, []);
   const headerStyle = useAnimatedStyle(
     () => ({
       left: interpolate(animHeader.value, [0, 1], [x, targetX + paddingLeft]),
@@ -150,9 +191,9 @@ const RestaurantDetail = ({ navigation, route }) => {
   }));
   const renderFoodCategoryItem = category => {
     return (
-      <View key={`cat_${category}`} style={styles.foodCategory}>
+      <View key={`cat_${category.id}`} style={styles.foodCategory}>
         <FText color={Colors.typography_40} fontSize={12} fontWeight={700}>
-          {category.toUpperCase()}
+          {category.name.toUpperCase()}
         </FText>
       </View>
     );
@@ -163,63 +204,81 @@ const RestaurantDetail = ({ navigation, route }) => {
       image
     });
   };
-  const renderFoodItem = ({ item, index }) => {
+  const renderFoodItem = React.useCallback(({ item, index }) => {
     const marginRight = index % 2 === 0 ? setXAxisValue(15) : 0;
-    return <FoodCard onPress={onFoodCardItemPress} item={item} containerStyle={[styles.miniFoodCard, { marginRight }]} />;
-  };
-  return (
-    <Container>
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+    const marginLeft = index % 2 === 0 ? setXAxisValue(26) : 0;
+    return <FoodCard onPress={onFoodCardItemPress} item={item} containerStyle={[styles.miniFoodCard, { marginLeft, marginRight }]} />;
+  }, []);
+  const renderListHeaderComponent = React.useCallback(() => {
+    console.log('re render');
+    return (
+      <React.Fragment>
         <View style={styles.headerContainer}>
           <Animated.View style={[styles.header, headerStyle]}>
-            <Image
-              source={{
-                uri: data.cover_image
-              }}
-              style={styles.banner}
-            />
+            <Observer>
+              {() => (
+                <Image
+                  source={{
+                    uri: restaurantStore.restaurant.cover_image
+                  }}
+                  style={styles.banner}
+                />
+              )}
+            </Observer>
             <TouchableOpacity onPress={onBackPress} style={styles.btnBack}>
               <Image style={styles.backIcon} source={require('../assets/images/chevron-left.png')} />
             </TouchableOpacity>
           </Animated.View>
           <Animated.View entering={BounceIn}>
             <View style={styles.logoContainer}>
-              <Image source={{ uri: data.logo }} style={styles.logo} />
+              <Observer>{() => <Image source={{ uri: restaurantStore.restaurant.logo }} style={styles.logo} />}</Observer>
             </View>
           </Animated.View>
         </View>
         <Animated.View style={[styles.restaurantInfo, inforContainerStyle]}>
           <FText fontWeight={700} fontSize="h6">
-            {data.name}
+            {restaurantStore.restaurant.name}
           </FText>
           <Padding paddingTop={10} />
-          <FText fontSize={14} color={Colors.grey_suit}>
-            {data.address}
-          </FText>
-          <View style={styles.foodCategories}>{data.food_categories.map(renderFoodCategoryItem)}</View>
+          <Observer>
+            {() => (
+              <FText fontSize={14} color={Colors.grey_suit}>
+                {restaurantStore.restaurant.address}
+              </FText>
+            )}
+          </Observer>
+          <Observer>
+            {() => (
+              <View style={styles.foodCategories}>{restaurantStore.restaurant.food_categories.slice().map(renderFoodCategoryItem)}</View>
+            )}
+          </Observer>
           <View style={styles.deliveryInfo}>
             <View style={styles.deliveryInfoLine}>
               <Image style={styles.deliveryIcon} source={require('../assets/images/delivery.png')} />
               <FText color={Colors.gray_80} fontSize={14} lineHeight={14}>
-                {data.delivery_fee === 0 ? 'Free Delivery' : `$${data.delivery_fee}/km`}
+                {restaurantStore.restaurant.delivery_fee === 0 ? 'Free Delivery' : `$${restaurantStore.restaurant.delivery_fee}/km`}
               </FText>
             </View>
-            <View style={styles.deliveryInfoLine}>
+            {/* <View style={styles.deliveryInfoLine}>
               <Image style={styles.timerIcon} source={require('../assets/images/timer.png')} />
               <FText color={Colors.gray_80} fontSize={14} lineHeight={14}>
-                {data.delivery_time}
+                {restaurantStore.restaurant.delivery_time}
               </FText>
-            </View>
+            </View> */}
           </View>
           <View style={styles.reviewInfo}>
             <StarSvg size={24} color={Colors.secondary} />
             <Padding paddingRight={5} />
-            <FText fontSize={14} lineHeight={14}>
-              {data.avgRate}{' '}
-              <FText color={Colors.grey_suit} fontSize={14} lineHeight={14}>
-                ({data.totalReviews}+){' '}
-              </FText>
-            </FText>
+            <Observer>
+              {() => (
+                <FText fontSize={14} lineHeight={14}>
+                  {restaurantStore.restaurant.avg_rating}{' '}
+                  <FText color={Colors.grey_suit} fontSize={14} lineHeight={14}>
+                    ({restaurantStore.restaurant.total_reviews}+){' '}
+                  </FText>
+                </FText>
+              )}
+            </Observer>
             <TouchableOpacity onPress={onSeeReviewPress}>
               <FText color={Colors.primary} fontSize={14} lineHeight={14}>
                 See Reviews
@@ -232,24 +291,67 @@ const RestaurantDetail = ({ navigation, route }) => {
             Featured Items
           </FText>
           <Padding paddingTop={10} />
-          <FoodCarousel cardStyle={styles.foodCard} data={foodData} />
-        </Animated.View>
-        <Animated.View style={[styles.categoryList, inforContainerStyle]}>
           <Observer>
             {() => (
-              <ListPicker
-                data={['All', ...data.food_categories]}
-                value={localState.category}
-                onChange={category => localState.setCategory(category)}
+              <FoodCarousel
+                onEndReached={onFetchMoreFeatureProducts}
+                onEndReachedThreshold={0.5}
+                cardStyle={styles.foodCard}
+                data={restaurantStore.products.slice()}
               />
             )}
           </Observer>
-          <Padding paddingTop={10} />
+        </Animated.View>
+        <Padding paddingTop={30} paddingHorizontal={26}>
           <Observer>
-            {() => <FlatList scrollEnabled={false} numColumns={2} data={localState.filterdFoodItems.slice()} renderItem={renderFoodItem} />}
+            {() => (
+              <ListPicker
+                data={['All', ...restaurantStore.restaurant.food_categories.map(x => x.name)]}
+                value={localState.category}
+                onChange={onCategoryChange}
+              />
+            )}
+          </Observer>
+        </Padding>
+        <Padding paddingTop={10} />
+        <Animated.View entering={BounceIn} style={styles.emptyListContainer}>
+          <Observer>
+            {() =>
+              restaurantStore.fetchingCategoryProducts ? (
+                <Padding paddingTop={15} paddingBottom={50}>
+                  <ActivityIndicator color={Colors.primary} size="large" />
+                </Padding>
+              ) : (
+                restaurantStore.categoryProducts.length === 0 && (
+                  <FText color={Colors.typography_40} fontSize={12} fontWeight={700}>
+                    No items found
+                  </FText>
+                )
+              )
+            }
           </Observer>
         </Animated.View>
-      </ScrollView>
+      </React.Fragment>
+    );
+  }, []);
+  return (
+    <Container disableLast>
+      <Animated.View style={[styles.categoryList, inforContainerStyle]}>
+        <Observer>
+          {() => (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              numColumns={2}
+              data={restaurantStore.categoryProducts.slice()}
+              onEndReached={onFetchMoreCategoryProducts}
+              onEndReachedThreshold={0.5}
+              renderItem={renderFoodItem}
+              ListHeaderComponent={renderListHeaderComponent}
+            />
+          )}
+        </Observer>
+      </Animated.View>
+      <Padding bottom={bottom} />
     </Container>
   );
 };
@@ -348,11 +450,16 @@ const styles = StyleSheet.create({
   foodCard: {
     width: setValue(266)
   },
-  categoryList: {
-    marginHorizontal: setXAxisValue(26),
-    marginTop: setYAxisValue(30)
-  },
+  categoryList: {},
   miniFoodCard: {
     width: (Layout.window.width - setXAxisValue(52 + 15)) / 2
+  },
+  emptyListContainer: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  loadmoreIndicatorContainer: {
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });

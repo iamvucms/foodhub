@@ -4,11 +4,12 @@ import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCar
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import { ChevronRightSvg, SearchSvg } from '../assets/svg';
-import { appStore, userStore, useStore } from '../stores';
+import { appStore, homeStore, userStore, useStore } from '../stores';
 import { Observer, observer } from 'mobx-react-lite';
 import { autorun, runInAction } from 'mobx';
 import { CommonActions } from '@react-navigation/native';
 import userActions from '../actions/userActions';
+import homeActions from '../actions/homeActions';
 const foodData = [
   {
     id: 1,
@@ -90,7 +91,11 @@ const Home = ({ navigation }) => {
         );
       }
     });
-    userActions.getUserInformation();
+    const initActions = async () => {
+      userActions.fetchUserInformation();
+      homeActions.getHomeInformation();
+    };
+    initActions();
   }, []);
   const onAddressPress = () => navigation.navigate('UserAddress');
   const onDiscoverFoodPress = () => navigation.navigate('Discover');
@@ -172,7 +177,7 @@ const Home = ({ navigation }) => {
               <ChevronRightSvg color={Colors.primary} />
             </TouchableOpacity>
           </View>
-          <FoodCarousel data={foodData} />
+          <FoodCarousel />
         </View>
       </ScrollView>
     </Container>

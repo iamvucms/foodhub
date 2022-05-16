@@ -1,16 +1,17 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import FText from './FText';
 import Padding from './Padding';
 import { Colors } from '../constants/colors';
 import { setValue, setYAxisValue } from '../utils';
-import { observer } from 'mobx-react-lite';
-import { useStore } from '../stores';
+import { Observer, observer } from 'mobx-react-lite';
+import { cartStore, userStore, useStore } from '../stores';
 import { Layout } from '../constants';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
 
 const CartSummary = observer(() => {
-  const cartStore = useStore('cart');
+  const navigation = useNavigation();
   const isEmpty = cartStore.cartItems.length === 0;
   if (isEmpty) {
     return (
@@ -26,6 +27,9 @@ const CartSummary = observer(() => {
       </View>
     );
   }
+  const onChangeAddressPress = () => {
+    navigation.navigate('UserAddress');
+  };
   return (
     <View>
       <View style={styles.footerLine}>
@@ -76,11 +80,21 @@ const CartSummary = observer(() => {
           </FText>
         </FText>
       </View>
-      <View style={styles.deliveryInfo}>
+      <Pressable onPress={onChangeAddressPress} style={styles.deliveryInfo}>
         <FText>Deliver to </FText>
         <Padding paddingTop={5} />
-        <FText color={Colors.primary}>123 abc street, New York, NY 10001</FText>
-      </View>
+        <Observer>
+          {() => (
+            <React.Fragment>
+              <FText color={Colors.primary}>{`${userStore.mainAddress.name}, ${userStore.mainAddress.phone_number} `}</FText>
+              <FText
+                color={
+                  Colors.primary
+                }>{`${userStore.mainAddress.street}, ${userStore.mainAddress.district}, ${userStore.mainAddress.province}`}</FText>
+            </React.Fragment>
+          )}
+        </Observer>
+      </Pressable>
     </View>
   );
 });

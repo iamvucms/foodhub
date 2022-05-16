@@ -1,5 +1,5 @@
 import { GpsSvg, OrderSvg, ProfileSvg } from '../assets/svg';
-
+export const ItemEachPage = 10;
 export const FoodCategories = [
   {
     id: 1,
