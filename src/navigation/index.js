@@ -16,6 +16,7 @@ import AddAddress from '../screens/AddAddress';
 import AddressProvinceAndDistrict from '../screens/AddressProvinceAndDistrict';
 import Cart from '../screens/Cart';
 import CategoryDetail from '../screens/CategoryDetail';
+import Checkout from '../screens/Checkout';
 import Discover from '../screens/Discover';
 import FoodDetail from '../screens/FoodDetail';
 import Home from '../screens/Home';
@@ -71,6 +72,7 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="UserAddress" component={UserAddress} />
       <Stack.Screen name="AddAddress" component={AddAddress} />
       <Stack.Screen name="AddressProvinceAndDistrict" component={AddressProvinceAndDistrict} />
+      <Stack.Screen name="Checkout" component={Checkout} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (

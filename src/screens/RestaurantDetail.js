@@ -210,7 +210,6 @@ const RestaurantDetail = ({ navigation, route }) => {
     return <FoodCard onPress={onFoodCardItemPress} item={item} containerStyle={[styles.miniFoodCard, { marginLeft, marginRight }]} />;
   }, []);
   const renderListHeaderComponent = React.useCallback(() => {
-    console.log('re render');
     return (
       <React.Fragment>
         <View style={styles.headerContainer}>
@@ -256,15 +255,9 @@ const RestaurantDetail = ({ navigation, route }) => {
             <View style={styles.deliveryInfoLine}>
               <Image style={styles.deliveryIcon} source={require('../assets/images/delivery.png')} />
               <FText color={Colors.gray_80} fontSize={14} lineHeight={14}>
-                {restaurantStore.restaurant.delivery_fee === 0 ? 'Free Delivery' : `$${restaurantStore.restaurant.delivery_fee}/km`}
+                {restaurantStore.restaurant.delivery_fee === 0 ? 'Free Delivery' : `$${restaurantStore.restaurant.delivery_fee}/order`}
               </FText>
             </View>
-            {/* <View style={styles.deliveryInfoLine}>
-              <Image style={styles.timerIcon} source={require('../assets/images/timer.png')} />
-              <FText color={Colors.gray_80} fontSize={14} lineHeight={14}>
-                {restaurantStore.restaurant.delivery_time}
-              </FText>
-            </View> */}
           </View>
           <View style={styles.reviewInfo}>
             <StarSvg size={24} color={Colors.secondary} />

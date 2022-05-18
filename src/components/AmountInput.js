@@ -1,13 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { setValue, setXAxisValue } from '../utils';
 import { DecrementSvg, IncrementSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
 import FText from './FText';
-import { observer } from 'mobx-react-lite';
 
 const AmountInput = ({ value, onChangeValue, size = 30.6, allowZero = false }) => {
-  console.log('render amount');
   return (
     <View style={styles.container}>
       <TouchableOpacity

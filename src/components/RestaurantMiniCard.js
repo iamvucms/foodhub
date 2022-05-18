@@ -35,7 +35,7 @@ const RestaurantMiniCard = ({ data, containerStyle }) => {
           <View style={styles.deliveryInfoLine}>
             <Image style={styles.deliveryIcon} source={require('../assets/images/delivery.png')} />
             <FText color={Colors.gray_80} fontSize={12} lineHeight={14}>
-              {data.delivery_fee === 0 ? 'Free Delivery' : `$${data.delivery_fee}/km`}
+              {data.delivery_fee === 0 ? 'Free Delivery' : `$${data.delivery_fee}/order`}
             </FText>
           </View>
           <View style={styles.deliveryInfoLine}>

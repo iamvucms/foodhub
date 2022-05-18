@@ -1,5 +1,16 @@
 import { GpsSvg, OrderSvg, ProfileSvg } from '../assets/svg';
-export const ItemEachPage = 10;
+import { Colors } from './colors';
+export const ITEM_EACH_PAGE = 10;
+export const OrderStatusCode = {
+  PENDING: 1,
+  CONFIRMED: 2,
+  PREPARING: 3,
+  PREPARED: 4,
+  DELIVERING: 5,
+  DELIVERED: 6,
+  REJECTED: 7,
+  CANCELLED: 8
+};
 export const FoodCategories = [
   {
     id: 1,
@@ -39,33 +50,43 @@ export const SortTypes = {
   HighestRated: 'Highest Rated'
 };
 export const OrderStatus = {
-  Pending: 'Pending',
-  Preparing: 'Preparing',
-  Ready: 'Ready',
-  Delivered: 'Delivered',
-  Delivering: 'Delivering',
-  Cancelled: 'Cancelled'
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  PREPARING: 'Preparing',
+  PREPARED: 'Prepared',
+  DELIVERING: 'Delivering',
+  DELIVERED: 'Delivered',
+  REJECTED: 'Rejected',
+  CANCELLED: 'Cancalled'
 };
 export const OrderStatusColor = {
-  Pending: '#f1c40f',
-  Preparing: '#3498db',
-  Ready: '#2ecc71',
-  Delivered: '#2ecc71',
-  Delivering: '#2ecc71',
-  Cancelled: '#e74c3c'
+  PENDING: '#f1c40f',
+  CONFIRMED: '#3498db',
+  PREPARING: '#3498db',
+  PREPARED: '#2ecc71',
+  DELIVERING: '#2ecc71',
+  DELIVERED: Colors.primary,
+  REJECTED: '#e74c3c',
+  CANCELLED: '#e74c3c'
 };
 export const OrderStatusDescription = {
-  Pending: 'Your order is being processed',
-  Preparing: 'Your order is being prepared',
-  Ready: 'Your order is ready for delivery',
-  Delivered: 'Your order has been delivered',
-  Delivering: 'Your order is on the way',
-  Cancelled: 'Your order has been cancelled'
+  PENDING: 'Your order is pending',
+  CONFIRMED: 'Your order is confirmed',
+  PREPARING: 'Your order is preparing',
+  PREPARED: 'Your order is prepared',
+  DELIVERING: 'Your order is delivering',
+  DELIVERED: 'Your order is delivered',
+  REJECTED: 'Your order is rejected',
+  CANCELLED: 'Your order is cancelled'
+};
+export const PaymentMethods = {
+  CASH_ON_DELIVERY: 1,
+  CARD: 2
 };
 export const drawerMenus = [
   {
     name: 'My Orders',
-    routeName: 'Order',
+    routeName: 'Orders',
     iconComponent: OrderSvg
   },
   {

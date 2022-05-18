@@ -1,8 +1,10 @@
-import { StyleSheet, Pressable, FlatList, View, ScrollView } from 'react-native';
+import { StyleSheet, Pressable, FlatList, View, ScrollView, Image } from 'react-native';
 import React, { useRef } from 'react';
 import { Container, FText, Header, OrderCard, Padding } from '../components';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import Animated, {
+  BounceIn,
+  FadeIn,
   interpolate,
   interpolateColor,
   useAnimatedScrollHandler,
@@ -15,6 +17,8 @@ import { Colors } from '../constants/colors';
 import { FontWeights } from '../components/FText';
 import { uid } from 'uid';
 import { OrderStatus } from '../constants/data';
+import { Observer } from 'mobx-react-lite';
+import { orderStore } from '../stores';
 const { width } = Layout.window;
 const mockOrders = [
   {
@@ -114,6 +118,30 @@ const Orders = () => {
       animTab.value = event.contentOffset.x / width;
     }
   });
+  const renderEmptyOrdersComponent = React.useCallback(() => {
+    return (
+      <View style={styles.emptyOrderContainer}>
+        <Animated.View entering={BounceIn}>
+          <Image style={styles.emptyOrder} source={require('../assets/images/empty-box.png')} />
+        </Animated.View>
+        <Animated.View entering={FadeIn}>
+          <FText color={Colors.aslo_gray}>You don't have any orders yet.</FText>
+        </Animated.View>
+      </View>
+    );
+  }, []);
+  const renderEmptyHistoryComponent = React.useCallback(() => {
+    return (
+      <View style={styles.emptyOrderContainer}>
+        <Animated.View entering={BounceIn}>
+          <Image style={styles.emptyOrder} source={require('../assets/images/empty-box.png')} />
+        </Animated.View>
+        <Animated.View entering={FadeIn}>
+          <FText color={Colors.aslo_gray}>You didn't have any orders in history.</FText>
+        </Animated.View>
+      </View>
+    );
+  }, []);
   const renderListHeader = React.useCallback(() => <Padding paddingTop={29} />, []);
   return (
     <Container disableLast>
@@ -137,10 +165,28 @@ const Orders = () => {
           horizontal
           showsHorizontalScrollIndicator={false}>
           <View style={styles.listPage}>
-            <FlatList ListHeaderComponent={renderListHeader} data={mockOrders} renderItem={({ item }) => <OrderCard item={item} />} />
+            <Observer>
+              {() => (
+                <FlatList
+                  ListHeaderComponent={renderListHeader}
+                  data={orderStore.orders.slice()}
+                  renderItem={({ item }) => <OrderCard item={item} />}
+                  ListEmptyComponent={renderEmptyOrdersComponent}
+                />
+              )}
+            </Observer>
           </View>
           <View style={styles.listPage}>
-            <FlatList ListHeaderComponent={renderListHeader} data={mockOrders} renderItem={({ item }) => <OrderCard item={item} />} />
+            <Observer>
+              {() => (
+                <FlatList
+                  ListHeaderComponent={renderListHeader}
+                  ListEmptyComponent={renderEmptyHistoryComponent}
+                  data={orderStore.orderHistory.slice()}
+                  renderItem={({ item }) => <OrderCard item={item} />}
+                />
+              )}
+            </Observer>
           </View>
         </Animated.ScrollView>
       </View>
@@ -189,5 +235,15 @@ const styles = StyleSheet.create({
   },
   horizontalContainer: {
     flex: 1
+  },
+  emptyOrderContainer: {
+    paddingVertical: setYAxisValue(100),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  emptyOrder: {
+    marginBottom: setYAxisValue(20),
+    height: setValue(80),
+    width: setValue(80)
   }
 });

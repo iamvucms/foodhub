@@ -4,8 +4,12 @@ import { ignorePersistNodes } from '../utils';
 class HomeStore {
   products = [];
   restaurants = [];
+  suggestProducts = [];
   constructor() {
     makeAutoObservable(this);
+  }
+  setSuggestProducts(suggestProducts) {
+    this.suggestProducts = suggestProducts;
   }
   setFavoriteRestaurant(restaurantId, favorite) {
     const restaurant = this.restaurants.find(r => r.id === restaurantId);

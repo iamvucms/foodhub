@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import { Layout } from '../constants';
 import AsyncStorge from '@react-native-async-storage/async-storage';
 import { ignore } from 'mobx-sync';
+import dayjs from 'dayjs';
 export * from './api';
 const {
   window: { width, height },
@@ -75,4 +76,39 @@ export const getItem = async (key, decodeJson = false) => {
 };
 export const ignorePersistNodes = (context, nodeNames) => {
   nodeNames.forEach(nodeName => ignore(context, nodeName));
+};
+export const getDiffTimeString = time1 => {
+  const time2 = new Date().getTime();
+  const diffInSeconds = Math.abs(time1 - time2) / 1000;
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+  let dateString = dayjs(time1).format('MMM DD, YYYY');
+  let type = 'date';
+  let postfix = '';
+  if (diffInSeconds < 60) {
+    type = 'seconds';
+    dateString = `${diffInSeconds}`;
+    postfix = `second${diffInSeconds > 1 ? 's' : ''} ago`;
+  } else if (diffInMinutes < 60) {
+    type = 'minutes';
+    dateString = `${diffInMinutes}`;
+    postfix = `minute${diffInMinutes > 1 ? 's' : ''} ago`;
+  } else if (diffInHours < 24) {
+    type = 'hours';
+    dateString = `${diffInHours}`;
+    postfix = `hour${diffInHours > 1 ? 's' : ''} ago`;
+  } else if (diffInDays < 30) {
+    type = 'days';
+    dateString = `${diffInDays}`;
+    postfix = `day${diffInDays > 1 ? 's' : ''} ago`;
+  }
+  if (type !== 'date') {
+    dateString = Math.round(dateString);
+  }
+  return {
+    dateString,
+    type,
+    postfix
+  };
 };

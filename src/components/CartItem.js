@@ -40,7 +40,7 @@ const CartItem = observer(({ item }) => {
         </View>
         <View style={styles.cartInfoPrice}>
           <FText fontSize={16} color={Colors.primary} lineHeight={16}>
-            ${item.price * item.amount}
+            ${item.price}
           </FText>
           <AmountInput allowZero onChangeValue={onChangeAmount} value={item.amount} size={28} />
         </View>

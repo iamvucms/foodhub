@@ -4,12 +4,13 @@ import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCar
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
 import { ChevronRightSvg, SearchSvg } from '../assets/svg';
-import { appStore, homeStore, userStore, useStore } from '../stores';
+import { appStore, cartStore, homeStore, orderStore, userStore, useStore } from '../stores';
 import { Observer, observer } from 'mobx-react-lite';
 import { autorun, runInAction } from 'mobx';
 import { CommonActions } from '@react-navigation/native';
 import userActions from '../actions/userActions';
 import homeActions from '../actions/homeActions';
+import orderActions from '../actions/orderActions';
 const foodData = [
   {
     id: 1,
@@ -94,12 +95,14 @@ const Home = ({ navigation }) => {
     const initActions = async () => {
       userActions.fetchUserInformation();
       homeActions.getHomeInformation();
+      orderActions.fetchUserOrders();
     };
     initActions();
   }, []);
   const onAddressPress = () => navigation.navigate('UserAddress');
   const onDiscoverFoodPress = () => navigation.navigate('Discover');
   const showDrawerMenu = () => appStore.toggleDrawerMenu();
+  cartStore.deliveryFee;
   return (
     <Container disableLast>
       <View style={styles.header}>

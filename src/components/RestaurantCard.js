@@ -60,7 +60,7 @@ const RestaurantCard = ({ item, onPress }) => {
           <View style={styles.deliveryInfoLine}>
             <Image style={styles.deliveryIcon} source={require('../assets/images/delivery.png')} />
             <FText color={Colors.gray_80} fontSize={12} lineHeight={14}>
-              {item.delivery_fee === 0 ? 'Free Delivery' : `$${item.delivery_fee}/km`}
+              {item.delivery_fee === 0 ? 'Free Delivery' : `$${item.delivery_fee}/order`}
             </FText>
           </View>
           {/* <View style={styles.deliveryInfoLine}>

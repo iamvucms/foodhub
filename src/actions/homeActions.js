@@ -1,6 +1,6 @@
 import { baseUrl } from '../constants';
 import { homeStore, userStore } from '../stores';
-import { get } from '../utils';
+import { get, post } from '../utils';
 
 const fetchRestaurants = async ({ isFetchMore = false } = {}) => {
   try {
@@ -38,10 +38,25 @@ const fetchProducts = async ({ isFetchMore = false } = {}) => {
     console.log({ fetchProducts: e });
   }
 };
+const fetchSuggestProducts = async ({ categoryIds, restaurantIds, productIds }) => {
+  try {
+    const response = await post(`${baseUrl}/suggest-products`, {
+      categoryIds,
+      restaurantIds,
+      skipProductIds: productIds
+    });
+    if (response.success) {
+      homeStore.setSuggestProducts(response.data);
+    }
+  } catch (e) {
+    console.log({ fetchSuggestProductsBasedOnCart: e });
+  }
+};
 const getHomeInformation = async () => {
   const listOfActions = [fetchRestaurants, fetchProducts];
   return await Promise.all(listOfActions.map(action => action()));
 };
 export default {
-  getHomeInformation
+  getHomeInformation,
+  fetchSuggestProducts
 };

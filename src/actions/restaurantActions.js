@@ -1,5 +1,5 @@
 import { baseUrl } from '../constants';
-import { ItemEachPage } from '../constants/data';
+import { ITEM_EACH_PAGE } from '../constants/data';
 import { restaurantStore, userStore } from '../stores';
 import { get } from '../utils';
 
@@ -12,7 +12,7 @@ const fetchRestaurantProducts = async ({ restaurantId, isFetchMore = false }) =>
     }
     restaurantStore.setFetchingProducts(true);
     const response = await get(
-      `${baseUrl}/restaurants/${restaurantId}/products?page=${restaurantStore.currentPage}&limit=${ItemEachPage}&orderBy=avg_rating`
+      `${baseUrl}/restaurants/${restaurantId}/products?page=${restaurantStore.currentPage}&limit=${ITEM_EACH_PAGE}&orderBy=avg_rating`
     );
     if (response.success) {
       const products = response.data.map(product => ({
@@ -42,7 +42,7 @@ const fetchRestaurantCategoryProducts = async ({ restaurantId, categoryId, isFet
     }
 
     const response = await get(
-      `${baseUrl}/restaurants/${restaurantId}/products?page=${restaurantStore.currentCategoryPage}&limit=${ItemEachPage}${
+      `${baseUrl}/restaurants/${restaurantId}/products?page=${restaurantStore.currentCategoryPage}&limit=${ITEM_EACH_PAGE}${
         categoryId ? '&categoryId=' + categoryId : ''
       }`
     );
@@ -69,7 +69,7 @@ const fetchRestaurantCategoryProducts = async ({ restaurantId, categoryId, isFet
   }
 };
 const fetchRestaurant = async ({ restaurantId }) => {
-  const listOfActions = [fetchRestaurantCategoryProducts];
+  const listOfActions = [fetchRestaurantCategoryProducts, fetchRestaurantProducts];
   return await Promise.all(listOfActions.map(action => action({ restaurantId })));
 };
 export default {
