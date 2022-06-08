@@ -1,7 +1,6 @@
 import { StyleSheet, StatusBar, View } from 'react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { setYAxisValue } from '../utils';
 
 const Container = ({ children, disableFirst, disableLast, statusBarProps }) => {
   const { bottom, top } = useSafeAreaInsets();

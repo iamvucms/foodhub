@@ -1,6 +1,6 @@
 import { action, computed, makeAutoObservable, makeObservable, observable, toJS } from 'mobx';
 import { homeStore } from '.';
-import { compareCartItemAddOns } from '../utils';
+import { compareCartItemAddOns, ignorePersistNodes } from '../utils';
 
 class CartStore {
   cartItems = [];

@@ -29,5 +29,8 @@ class HomeStore {
   setProducts(products) {
     this.products = products;
   }
+  getProduct(productId) {
+    return this.products.find(p => p.id === productId);
+  }
 }
 export default HomeStore;

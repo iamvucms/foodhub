@@ -48,7 +48,7 @@ class OrderStore {
           ...data,
           updated_at: new Date().getTime()
         };
-        this.orders = this.orders.filter(order => order.id !== orderId);
+        this.orders = [...this.orders].filter(order => order.id !== orderId);
         this.orderHistory = [...this.orderHistory, newOrder].sort((a, b) => b.id - a.id);
       }
     } else {

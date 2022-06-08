@@ -1,3 +1,4 @@
+import { Axios } from 'axios';
 import { axiosInstance, createAxiosInstance } from '../constants';
 
 export const get = async (url, params = {}) => {
@@ -11,11 +12,7 @@ export const postDelete = async url => {
 };
 export const request = async (url, data = {}, method = 'post') => {
   try {
-    let axios = axiosInstance;
-    if (!axios) {
-      axios = await createAxiosInstance();
-    }
-    console.log({ url, method });
+    const axios = createAxiosInstance();
     const response = await axios[method](url, data);
     return response.data;
   } catch (e) {

@@ -31,5 +31,6 @@ export const Colors = {
   drawer_icon_color: '#979ba0',
   waterloo: '#7F7D92',
   black_50: 'rgba(0,0,0,0.5)',
-  black_75: 'rgba(0,0,0,0.75)'
+  black_75: 'rgba(0,0,0,0.75)',
+  danger: '#FF5252'
 };

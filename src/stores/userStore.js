@@ -59,6 +59,7 @@ class UserStore {
       removeFavoriteRestaurant: action,
       addFavoriteProduct: action,
       removeFavoriteProduct: action,
+      setAccessToken: action,
       mainAddress: computed
     });
   }
@@ -86,6 +87,9 @@ class UserStore {
   }
   setLogined(logined) {
     this.logined = logined;
+    if (!logined) {
+      this.user = {};
+    }
   }
   setAddresses(addresses) {
     this.addresses = addresses;
@@ -150,6 +154,9 @@ class UserStore {
   }
   getIsFavoriteProduct(productId) {
     return this.favoriteProducts[productId];
+  }
+  setAccessToken(accessToken) {
+    this.user.accessToken = accessToken;
   }
   get mainAddress() {
     return this.addresses.find(address => address.selected);

@@ -1,5 +1,5 @@
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BackButton, Container, FoodCard, FText, Padding } from '../components';
 import { FoodCategories, SortTypes } from '../constants/data';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
@@ -8,6 +8,9 @@ import { Layout } from '../constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withDecay, withDelay, withTiming } from 'react-native-reanimated';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
+import { DiscoverActions } from '../actions';
+import { discoverStore } from '../stores';
+import { autorun } from 'mobx';
 const foodData = [
   {
     id: 1,
@@ -93,6 +96,17 @@ const CategoryDetail = ({ navigation, route }) => {
   }));
   const sortTypeAnim = useSharedValue(0);
   const { bottom } = useSafeAreaInsets();
+  useEffect(() => {
+    DiscoverActions.fetchCategoryProducts(categoryId);
+    let to = null;
+    autorun(() => {
+      const { orderBy, orderType } = state.sortType;
+      clearTimeout(to);
+      to = setTimeout(() => {
+        DiscoverActions.fetchCategoryProducts(categoryId, false, orderBy, orderType);
+      }, 300);
+    });
+  }, []);
   const sortTypeListStyle = useAnimatedStyle(() => ({
     height: interpolate(sortTypeAnim.value, [0, 1], [0, SortTypeListHeight])
   }));
@@ -106,13 +120,13 @@ const CategoryDetail = ({ navigation, route }) => {
     <FoodCard onPress={onItemPress} bannerStyle={styles.foodCardBanner} containerStyle={styles.foodCard} item={item} />
   );
   const renderSortTypeItem = item => (
-    <Observer>
+    <Observer key={item.name}>
       {() => {
         const onPress = () => {
           state.setSortType(item);
           sortTypeAnim.value = withDelay(200, withTiming(0));
         };
-        const isSelected = item === state.sortType;
+        const isSelected = item.name === state.sortType.name;
         return (
           <TouchableOpacity
             onPress={onPress}
@@ -123,7 +137,7 @@ const CategoryDetail = ({ navigation, route }) => {
               }
             ]}>
             <FText color={isSelected ? Colors.white : Colors.typography_60} fontSize="small" lineHeight={14}>
-              {item}
+              {item.name}
             </FText>
           </TouchableOpacity>
         );
@@ -137,9 +151,13 @@ const CategoryDetail = ({ navigation, route }) => {
           {category.name}
         </FText>
         <Padding paddingTop={19} />
-        <FText color={Colors.grey_suit} fontSize={19} lineHeightRatio={1.2}>
-          80 results of {category.name}
-        </FText>
+        <Observer>
+          {() => (
+            <FText color={Colors.grey_suit} fontSize={19} lineHeightRatio={1.2}>
+              {discoverStore.categoryProducts.length} results of {category.name}
+            </FText>
+          )}
+        </Observer>
         <View style={styles.bannerContainer}>
           <Image style={styles.banner} source={category.banner} />
         </View>
@@ -156,7 +174,7 @@ const CategoryDetail = ({ navigation, route }) => {
             <Observer>
               {() => (
                 <FText color={Colors.primary} fontSize="small" lineHeight={14}>
-                  {state.sortType}{' '}
+                  {state.sortType.name}{' '}
                 </FText>
               )}
             </Observer>
@@ -176,12 +194,17 @@ const CategoryDetail = ({ navigation, route }) => {
     <Container disableLast disableFirst>
       <BackButton />
       <View style={styles.mainContainer}>
-        <FlatList
-          ListHeaderComponent={renderListHeader}
-          renderItem={renderFoodItem}
-          data={foodData}
-          ListFooterComponent={renderListFooter}
-        />
+        <Observer>
+          {() => (
+            <FlatList
+              ListHeaderComponent={renderListHeader}
+              renderItem={renderFoodItem}
+              data={discoverStore.categoryProducts.slice()}
+              ListFooterComponent={renderListFooter}
+              keyExtractor={item => item.id}
+            />
+          )}
+        </Observer>
       </View>
     </Container>
   );

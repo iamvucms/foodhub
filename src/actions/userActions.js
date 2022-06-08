@@ -1,6 +1,6 @@
 import { baseAuthUrl, baseUrl } from '../constants';
 import { navigation } from '../navigation/navigationRef';
-import { homeStore, restaurantStore, userStore } from '../stores';
+import { discoverStore, homeStore, restaurantStore, userStore } from '../stores';
 import { get, post, postDelete, storeItem } from '../utils';
 const registerUser = async ({ name, password, emailOrPhone }, onRegister) => {
   userStore.setSigningUp(true);
@@ -124,8 +124,39 @@ const toggleFavoriteProduct = ({ productId }) => {
   const isFavorite = userStore.getIsFavoriteProduct(productId);
   restaurantStore.setFavoriteProduct(productId, !isFavorite);
   homeStore.setFavoriteProduct(productId, !isFavorite);
+  discoverStore.setFavoriteProduct(productId, !isFavorite);
   const userStoreAction = isFavorite ? 'removeFavoriteProduct' : 'addFavoriteProduct';
   userStore[userStoreAction](productId);
+};
+const updateUserInformation = async updatedUser => {
+  try {
+    const response = await post(`${baseUrl}/user`, {
+      ...updatedUser
+    });
+    if (response.success) {
+      userStore.setUser({
+        ...userStore.user,
+        ...response.data
+      });
+    }
+  } catch (e) {}
+};
+const requestRefreshToken = async () => {
+  try {
+    const response = await post(`${baseAuthUrl}/refresh-token`, {
+      refreshToken: userStore.user.refreshToken,
+      emailOrPhone: userStore.user.emailOrPhone
+    });
+    if (response.success) {
+      const { data } = response;
+      storeItem('accessToken', data.accessToken);
+      userStore.setAccessToken(data.accessToken);
+    } else {
+      logout();
+    }
+  } catch (e) {
+    console.log({ requestRefreshToken: e });
+  }
 };
 const fetchUserInformation = async () => {
   const listOfActions = [fetchAddresses];
@@ -143,5 +174,7 @@ export default {
   updateAddress,
   toggleFavoriteRestaurant,
   toggleFavoriteProduct,
-  fetchUserInformation
+  fetchUserInformation,
+  updateUserInformation,
+  requestRefreshToken
 };

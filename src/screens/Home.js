@@ -129,7 +129,7 @@ const Home = ({ navigation }) => {
           </Observer>
         </Pressable>
         <TouchableOpacity style={styles.btnMenu}>
-          <Image style={styles.avatar} source={{ uri: 'https://www.w3schools.com/howto/img_forest.jpg' }} />
+          <Observer>{() => <Image style={styles.avatar} source={{ uri: userStore.user.avatar }} />}</Observer>
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.mainContainer}>
@@ -214,7 +214,8 @@ const styles = StyleSheet.create({
   avatar: {
     width: '100%',
     height: '100%',
-    borderRadius: setValue(10)
+    borderRadius: setValue(10),
+    backgroundColor: Colors.gray_40
   },
   chevronDown: {
     width: setValue(6.64),

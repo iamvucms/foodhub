@@ -1,8 +1,11 @@
 import { Platform } from 'react-native';
-import { Layout } from '../constants';
+import { baseUrl, Layout, PREFIX_BASE_URL } from '../constants';
 import AsyncStorge from '@react-native-async-storage/async-storage';
 import { ignore } from 'mobx-sync';
 import dayjs from 'dayjs';
+import { post } from './api';
+import { userStore } from '../stores';
+import { UserActions } from '../actions';
 export * from './api';
 const {
   window: { width, height },
@@ -111,4 +114,25 @@ export const getDiffTimeString = time1 => {
     type,
     postfix
   };
+};
+export const uploadImage = async (uri, type = 'image/jpeg') => {
+  try {
+    const formData = new FormData();
+    formData.append('photo', {
+      uri,
+      name: 'photo.' + type.split('/')[1],
+      type
+    });
+    const response = await fetch(`${PREFIX_BASE_URL}${baseUrl}/photo`, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + userStore.user.accessToken
+      },
+      method: 'POST',
+      body: formData
+    }).then(rs => rs.json());
+    return response.data;
+  } catch (e) {
+    console.log({ uploadImage: e });
+  }
 };

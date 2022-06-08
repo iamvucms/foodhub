@@ -17,10 +17,11 @@ import { CartSvg, HeartSvg, StarSvg } from '../assets/svg';
 import { AmountInput, ButtonIcon, Container, FText, Padding } from '../components';
 import { Layout } from '../constants';
 import { Colors } from '../constants/colors';
-import { cartStore } from '../stores';
+import { cartStore, homeStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { uid } from 'uid';
 import { observer, Observer, useLocalObservable } from 'mobx-react-lite';
+import { UserActions } from '../actions';
 const bannerHeight = setYAxisValue(206);
 const bannerWidth = Layout.window.width - setXAxisValue(52);
 const bannerRadius = setValue(10);
@@ -113,9 +114,29 @@ const FoodDetail = ({ route, navigation }) => {
             <TouchableOpacity onPress={onBackPress} style={styles.btnBack}>
               <Image style={styles.backIcon} source={require('../assets/images/chevron-left.png')} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnFav}>
-              <HeartSvg color={Colors.white} size={15} />
-            </TouchableOpacity>
+            <Observer>
+              {() => {
+                const obserabledData = homeStore.getProduct(data.id);
+                const isFavorite = !!obserabledData.favorite;
+                const onPress = () => {
+                  UserActions.toggleFavoriteProduct({
+                    productId: obserabledData.id
+                  });
+                };
+                return (
+                  <TouchableOpacity
+                    onPress={onPress}
+                    style={[
+                      styles.btnFav,
+                      isFavorite && {
+                        backgroundColor: Colors.primary
+                      }
+                    ]}>
+                    <HeartSvg color={Colors.white} size={15} />
+                  </TouchableOpacity>
+                );
+              }}
+            </Observer>
           </View>
         </Animated.View>
         <Animated.View style={[styles.foodInformation, informationContainerStyle]}>
@@ -128,11 +149,11 @@ const FoodDetail = ({ route, navigation }) => {
             </View>
             <Padding paddingRight={8} />
             <FText fontSize={14} lineHeight={14}>
-              4.5
+              {data.avg_rating}
             </FText>
             <Padding paddingRight={5} />
             <FText color={Colors.grey_suit} fontSize={14} lineHeight={14}>
-              (30+)
+              ({data.total_reviews})
             </FText>
             <Padding paddingRight={9} />
             <TouchableOpacity>
@@ -214,15 +235,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    left: setValue(8),
-    right: setValue(16),
-    top: setValue(8)
+    left: setValue(12),
+    right: setValue(12),
+    top: setValue(12)
   },
   btnFav: {
     height: setValue(34),
     width: setValue(34),
     borderRadius: setValue(17),
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.gray,
     justifyContent: 'center',
     alignItems: 'center'
   },

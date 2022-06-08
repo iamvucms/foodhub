@@ -16,6 +16,7 @@ import AddAddress from '../screens/AddAddress';
 import AddressProvinceAndDistrict from '../screens/AddressProvinceAndDistrict';
 import Cart from '../screens/Cart';
 import CategoryDetail from '../screens/CategoryDetail';
+import ChangePassword from '../screens/ChangePassword';
 import Checkout from '../screens/Checkout';
 import Discover from '../screens/Discover';
 import FoodDetail from '../screens/FoodDetail';
@@ -31,6 +32,7 @@ import RestaurantDetail from '../screens/RestaurantDetail';
 import RestaurantReviews from '../screens/RestaurantReviews';
 import RestaurantReview from '../screens/RestaurantReviews';
 import SignUp from '../screens/SignUp';
+import UpdateInformation from '../screens/UpdateInformation';
 import UserAddress from '../screens/UserAddress';
 import { appStore, userStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
@@ -73,6 +75,8 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="AddAddress" component={AddAddress} />
       <Stack.Screen name="AddressProvinceAndDistrict" component={AddressProvinceAndDistrict} />
       <Stack.Screen name="Checkout" component={Checkout} />
+      <Stack.Screen name="UpdateInformation" component={UpdateInformation} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (
@@ -145,20 +149,32 @@ export const AnimatedAppNavigation = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.menuContainer, menuStyle]}>
-        <Image
-          style={styles.avatar}
-          source={{
-            uri: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60'
-          }}
-        />
+        <Observer>
+          {() => (
+            <Image
+              style={styles.avatar}
+              source={{
+                uri: userStore.user.avatar
+              }}
+            />
+          )}
+        </Observer>
         <Padding paddingTop={21} />
-        <FText fontSize="large" fontWeight={700}>
-          VuCms
-        </FText>
+        <Observer>
+          {() => (
+            <FText fontSize="large" fontWeight={700}>
+              {userStore.user.name}
+            </FText>
+          )}
+        </Observer>
         <Padding paddingTop={7} />
-        <FText fontSize="small" color={Colors.grey_suit}>
-          vuzero007@gmail.com
-        </FText>
+        <Observer>
+          {() => (
+            <FText fontSize="small" color={Colors.grey_suit}>
+              {userStore.user.emailOrPhone}
+            </FText>
+          )}
+        </Observer>
         <View style={styles.menuList}>{drawerMenus.map(renderMenuItem)}</View>
         <TouchableOpacity
           onPress={() => {
@@ -206,7 +222,8 @@ const styles = StyleSheet.create({
   avatar: {
     width: setValue(80),
     height: setValue(80),
-    borderRadius: 99
+    borderRadius: 99,
+    backgroundColor: Colors.white
   },
   menuList: {
     marginTop: setYAxisValue(25),
@@ -230,7 +247,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 2
+    zIndex: 999
   },
   menuIcon: {
     marginRight: setXAxisValue(14)

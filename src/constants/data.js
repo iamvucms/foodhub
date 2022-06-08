@@ -44,10 +44,26 @@ export const FoodCategories = [
   }
 ];
 export const SortTypes = {
-  Popular: 'Popular',
-  PriceLowToHigh: 'Price Low to High',
-  PriceHighToLow: 'Price High to Low',
-  HighestRated: 'Highest Rated'
+  Popular: {
+    name: 'Popular',
+    orderBy: 'total_reviews',
+    orderType: 'desc'
+  },
+  PriceLowToHigh: {
+    name: 'Price Low to High',
+    orderBy: 'price',
+    orderType: 'asc'
+  },
+  PriceHighToLow: {
+    name: 'Price High to Low',
+    orderBy: 'price',
+    orderType: 'desc'
+  },
+  HighestRated: {
+    name: 'Highest Rated',
+    orderBy: 'avg_rating',
+    orderType: 'desc'
+  }
 };
 export const OrderStatus = {
   PENDING: 'Pending',
@@ -118,5 +134,23 @@ export const drawerMenus = [
     name: 'Help & FAQs',
     routeName: 'Help',
     iconSrc: require('../assets/images/help.png')
+  }
+];
+export const profileSettings = [
+  {
+    name: 'Update Information',
+    routeName: 'UpdateInformation'
+  },
+  {
+    name: 'Delivery Address',
+    routeName: 'UserAddress'
+  },
+  {
+    name: 'Change Password',
+    routeName: 'ChangePassword'
+  },
+  {
+    name: 'Logout',
+    routeName: 'Logout'
   }
 ];

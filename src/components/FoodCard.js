@@ -96,9 +96,9 @@ const styles = StyleSheet.create({
   },
   headerInfo: {
     position: 'absolute',
-    left: setXAxisValue(11),
-    right: setXAxisValue(11),
-    top: setYAxisValue(10),
+    left: setXAxisValue(12),
+    right: setXAxisValue(12),
+    top: setYAxisValue(12),
     zIndex: 99,
     flexDirection: 'row',
     alignItems: 'center',

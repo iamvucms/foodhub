@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { getItem, isAndroid } from '../utils';
+import { Platform } from 'react-native';
+import { userStore } from '../stores';
 export let axiosInstance = null;
-export const createAxiosInstance = async () => {
-  const BASE_URL = isAndroid ? 'http://192.168.1.6:3000/api' : 'http://localhost:3000/api';
-  const accessToken = await getItem('accessToken');
+export const PREFIX_BASE_URL = Platform.OS === 'android' ? 'http://192.168.1.2:3000/api' : 'http://localhost:3000/api';
+export const createAxiosInstance = () => {
+  const accessToken = userStore.user.accessToken;
   axiosInstance = axios.create({
-    baseURL: BASE_URL,
+    baseURL: PREFIX_BASE_URL,
     timeout: 10000,
     headers: { Authorization: `Bearer ${accessToken}` }
   });
