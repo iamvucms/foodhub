@@ -1,7 +1,7 @@
 import { baseAuthUrl, baseUrl } from '../constants';
-import { navigation } from '../navigation/navigationRef';
+import { navigation, navigationRef } from '../navigation/navigationRef';
 import { discoverStore, homeStore, restaurantStore, userStore } from '../stores';
-import { get, post, postDelete, storeItem } from '../utils';
+import { get, post, postDelete, standardizeImageType, storeItem, uploadImage } from '../utils';
 const registerUser = async ({ name, password, emailOrPhone }, onRegister) => {
   userStore.setSigningUp(true);
   const response = await post(`${baseAuthUrl}/register`, {
@@ -54,7 +54,9 @@ const verifyOTP = async ({ otp }) => {
     storeItem('accessToken', data.accessToken);
     storeItem('refreshToken', data.refreshToken);
     userStore.setUser(response.data);
-    userStore.setLogined(true);
+    navigationRef.navigate('SignUpRole', {
+      user: response.data
+    });
   } else {
     userStore.setVerifyOTPError(response.error);
   }
@@ -95,7 +97,6 @@ const addAddress = async ({ address }) => {
 };
 const removeAddress = async ({ addressId }) => {
   const response = await postDelete(`${baseUrl}/address/${addressId}`);
-  console.log(response);
   if (response.success) {
     userStore.removeAddress(addressId);
   }
@@ -158,6 +159,31 @@ const requestRefreshToken = async () => {
     console.log({ requestRefreshToken: e });
   }
 };
+const createRestaurant = async ({ name, logo, cover_image, address, delivery_fee }) => {
+  userStore.setCreatingRestaurant(true);
+  try {
+    const uploadedLogo = await uploadImage(logo.uri, standardizeImageType(logo.type));
+    const uploadedCover = await uploadImage(cover_image.uri, standardizeImageType(cover_image.type));
+    const response = await post(`${baseUrl}/restaurants`, {
+      name,
+      logo: uploadedLogo.uri,
+      cover_image: uploadedCover.uri,
+      address,
+      delivery_fee,
+      owner_id: userStore.user.user_id
+    });
+    if (response.success) {
+      userStore.setUser({
+        ...userStore.user,
+        restaurant: response.data
+      });
+      userStore.setLogined(true);
+    }
+  } catch (e) {
+    console.log({ createRestaurant: e });
+  }
+  userStore.setCreatingRestaurant(false);
+};
 const fetchUserInformation = async () => {
   const listOfActions = [fetchAddresses];
   return await Promise.all(listOfActions.map(action => action()));
@@ -176,5 +202,6 @@ export default {
   toggleFavoriteProduct,
   fetchUserInformation,
   updateUserInformation,
-  requestRefreshToken
+  requestRefreshToken,
+  createRestaurant
 };

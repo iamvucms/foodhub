@@ -138,10 +138,6 @@ export const drawerMenus = [
 ];
 export const profileSettings = [
   {
-    name: 'Update Information',
-    routeName: 'UpdateInformation'
-  },
-  {
     name: 'Delivery Address',
     routeName: 'UserAddress'
   },
@@ -152,5 +148,37 @@ export const profileSettings = [
   {
     name: 'Logout',
     routeName: 'Logout'
+  }
+];
+export const orderProgresses = [
+  {
+    name: 'Pending',
+    status: OrderStatusCode.PENDING,
+    description: 'Sent to restaurant'
+  },
+  {
+    name: 'Confirmed',
+    status: OrderStatusCode.CONFIRMED,
+    description: 'Confirmed by restaurant'
+  },
+  {
+    name: 'Preparing',
+    status: OrderStatusCode.PREPARING,
+    description: 'Your order is preparing'
+  },
+  {
+    name: 'Prepared',
+    status: OrderStatusCode.PREPARED,
+    description: 'Your order is prepared'
+  },
+  {
+    name: 'Delivering',
+    status: OrderStatusCode.DELIVERING,
+    description: 'Your order is delivering'
+  },
+  {
+    name: 'Delivered',
+    status: OrderStatusCode.DELIVERED,
+    description: 'Your order is delivered'
   }
 ];

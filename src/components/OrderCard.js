@@ -13,7 +13,9 @@ import { navigationRef } from '../navigation/navigationRef';
 import { toJS } from 'mobx';
 import { uid } from 'uid';
 import { cartStore } from '../stores';
+import { useNavigation } from '@react-navigation/native';
 const OrderCard = ({ item }) => {
+  const navigation = useNavigation();
   const bottomSheetRef = useRef();
 
   const onCancelPress = () => {
@@ -45,6 +47,11 @@ const OrderCard = ({ item }) => {
     }));
     cartStore.addCartItems(products);
     navigationRef.navigate('Cart');
+  };
+  const onDetailPress = () => {
+    navigation.navigate('OrderDetail', {
+      data: item
+    });
   };
   return (
     <View style={styles.container}>
@@ -177,6 +184,7 @@ const OrderCard = ({ item }) => {
           </TouchableOpacity>
         )}
         <TouchableOpacity
+          onPress={onDetailPress}
           style={[
             styles.btnAction,
             {

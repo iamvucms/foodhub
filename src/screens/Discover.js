@@ -1,5 +1,5 @@
-import { FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useRef } from 'react';
+import { ActivityIndicator, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
 import { Container, FInput, FoodCard, Header, Padding, RestaurantMiniCard } from '../components';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { SearchSvg } from '../assets/svg';
@@ -16,6 +16,10 @@ import { Layout } from '../constants';
 import FText, { FontWeights } from '../components/FText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
+import { DiscoverActions } from '../actions';
+import { autorun } from 'mobx';
+import { SortTypes } from '../constants/data';
+import { discoverStore } from '../stores';
 const foodData = [
   {
     id: 1,
@@ -188,24 +192,24 @@ const Discover = ({ navigation }) => {
     setkeyword: keyword => {
       localState.keyword = keyword;
     },
-    get foodItems() {
-      return foodData.filter(item => item.name.toLowerCase().includes(localState.keyword.toLowerCase()));
-    },
+    sortType: SortTypes.Popular,
     get restaurantItems() {
       return restaurantData.filter(item => item.name.toLowerCase().includes(localState.keyword.toLowerCase()));
     }
   }));
-  const renderHeaderRight = () => (
-    <Image
-      source={{
-        uri: 'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-      }}
-      style={styles.avatar}
-    />
-  );
-  const onRightPress = () => {
-    //navigate
-  };
+  useEffect(() => {
+    let to = null;
+    autorun(() => {
+      clearTimeout(to);
+      const q = localState.keyword;
+      const processedQ = q.trim().toLowerCase();
+      to = setTimeout(() => {
+        DiscoverActions.searchProducts(processedQ, false, localState.sortType.orderBy, localState.sortType.orderType);
+        DiscoverActions.searchRestaurants(processedQ, false);
+      }, 300);
+    });
+  }, []);
+
   const onFoodItemPress = (item, image) => {
     navigation.navigate('FoodDetail', { data: item, image });
   };
@@ -247,10 +251,31 @@ const Discover = ({ navigation }) => {
       animTab.value = event.contentOffset.x / width;
     }
   });
-  const renderListFooter = () => <Padding paddingBottom={bottom + 80} />;
+  const onLoadMoreProducts = () => {
+    const q = localState.keyword.trim().toLowerCase();
+    DiscoverActions.searchProducts(q, true, localState.sortType.orderBy, localState.sortType.orderType);
+  };
+  const onLoadMoreRestaurants = () => {
+    const q = localState.keyword.trim().toLowerCase();
+    DiscoverActions.searchRestaurants(q, true);
+  };
+  const renderListFooter = () => (
+    <Padding paddingBottom={bottom + 80}>
+      <Observer>
+        {() => discoverStore.fetchingProducts && <ActivityIndicator style={{ marginTop: 100 }} size="large" color={Colors.primary} />}
+      </Observer>
+    </Padding>
+  );
+  const renderRestaurantListFooter = () => (
+    <Padding paddingBottom={bottom + 80}>
+      <Observer>
+        {() => discoverStore.fetchingRestaurants && <ActivityIndicator style={{ marginTop: 100 }} size="large" color={Colors.primary} />}
+      </Observer>
+    </Padding>
+  );
   return (
     <Container disableLast>
-      <Header title="Search Food" rightIcon={renderHeaderRight} onRightPress={onRightPress} onLeftPress={onLeftPress} />
+      <Header title="Search Food" onLeftPress={onLeftPress} />
       <View style={styles.mainContainer}>
         <View style={styles.searchInputContainer}>
           <View style={{ flex: 1 }}>
@@ -297,14 +322,16 @@ const Discover = ({ navigation }) => {
                   ListHeaderComponent={() => (
                     <View style={styles.searchResult}>
                       <FText fontSize="h3">Found</FText>
-                      <FText fontSize="h4">{`${localState.foodItems.length}`} Results</FText>
+                      <FText fontSize="h4">{`${discoverStore.searchProducts.length}`} Results</FText>
                     </View>
                   )}
                   ListFooterComponent={renderListFooter}
                   showsVerticalScrollIndicator={false}
                   numColumns={2}
-                  data={localState.foodItems.slice()}
+                  data={discoverStore.searchProducts.slice()}
                   renderItem={renderFoodItem}
+                  onEndReachedThreshold={0.5}
+                  onEndReached={onLoadMoreProducts}
                 />
               )}
             </Observer>
@@ -317,14 +344,16 @@ const Discover = ({ navigation }) => {
                   ListHeaderComponent={() => (
                     <View style={styles.searchResult}>
                       <FText fontSize="h3">Found</FText>
-                      <FText fontSize="h4">{`${localState.restaurantItems.length}`} Results</FText>
+                      <FText fontSize="h4">{`${discoverStore.searchRestaurants.length}`} Results</FText>
                     </View>
                   )}
-                  ListFooterComponent={renderListFooter}
+                  ListFooterComponent={renderRestaurantListFooter}
                   showsVerticalScrollIndicator={false}
                   numColumns={2}
-                  data={localState.restaurantItems.slice()}
+                  data={discoverStore.searchRestaurants.slice()}
                   renderItem={renderRestaurantItem}
+                  onEndReachedThreshold={0.5}
+                  onEndReached={onLoadMoreRestaurants}
                 />
               )}
             </Observer>

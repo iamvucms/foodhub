@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { Colors } from '../constants/colors';
@@ -20,7 +20,7 @@ const RestaurantMiniCard = ({ data, containerStyle }) => {
           />
           <View style={styles.rating}>
             <FText color={Colors.white} fontSize={10}>
-              {data.avgRate.toFixed(1)}
+              {data.avg_rating || '--'}
             </FText>
           </View>
         </View>
@@ -38,18 +38,12 @@ const RestaurantMiniCard = ({ data, containerStyle }) => {
               {data.delivery_fee === 0 ? 'Free Delivery' : `$${data.delivery_fee}/order`}
             </FText>
           </View>
-          <View style={styles.deliveryInfoLine}>
-            <Image style={styles.timerIcon} source={require('../assets/images/timer.png')} />
-            <FText color={Colors.gray_80} fontSize={12} lineHeight={14}>
-              {data.delivery_time}
-            </FText>
-          </View>
         </View>
         <View style={styles.foodCategories}>
-          {data.food_categories.map((category, index) => (
-            <View key={category} style={styles.categoryItem}>
+          {data.food_categories.slice(0, 3).map((category, index) => (
+            <View key={category.id} style={styles.categoryItem}>
               <FText color={Colors.typography_40} fontSize={12} lineHeight={12}>
-                {category.toUpperCase()}
+                {category.name.toUpperCase()}
               </FText>
             </View>
           ))}

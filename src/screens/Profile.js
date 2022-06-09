@@ -1,7 +1,7 @@
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { Container, FText, Header, Padding } from '../components';
-import { setValue, setXAxisValue, setYAxisValue, uploadImage } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, standardizeImageType, uploadImage } from '../utils';
 import { userStore } from '../stores';
 import { Colors } from '../constants/colors';
 import { Observer } from 'mobx-react-lite';
@@ -15,7 +15,7 @@ const Profile = () => {
     const result = await launchImageLibrary();
     if (result.assets) {
       const { uri, type } = result.assets[0];
-      const mimeType = type === 'image/jpg' ? 'image/jpeg' : type;
+      const mimeType = standardizeImageType(type);
       const avatar = await uploadImage(uri, mimeType);
       if (avatar.uri) {
         UserActions.updateUserInformation({
@@ -30,6 +30,19 @@ const Profile = () => {
     return (
       <TouchableOpacity onPress={onPress} style={styles.settingItem}>
         <FText color={isLogout ? Colors.primary : Colors.typography}>{item.name}</FText>
+      </TouchableOpacity>
+    );
+  }, []);
+  const renderListHeader = React.useCallback(() => {
+    if (!userStore.isRestaurantOwner) {
+      return null;
+    }
+    const onPress = () => {
+      navigation.navigate('RestaurantManagement');
+    };
+    return (
+      <TouchableOpacity onPress={onPress} style={styles.settingItem}>
+        <FText>Restaurant Management</FText>
       </TouchableOpacity>
     );
   }, []);
@@ -64,7 +77,12 @@ const Profile = () => {
           </Padding>
           <FText fontWeight={200}>{userStore.user.emailOrPhone}</FText>
         </View>
-        <FlatList data={profileSettings} renderItem={renderSettingItem} keyExtractor={item => item.routeName} />
+        <FlatList
+          ListHeaderComponent={renderListHeader}
+          data={profileSettings}
+          renderItem={renderSettingItem}
+          keyExtractor={item => item.routeName}
+        />
       </View>
     </Container>
   );

@@ -64,5 +64,8 @@ class OrderStore {
       });
     }
   }
+  getOrder(orderId) {
+    return this.orders.find(order => order.id === orderId) || this.orderHistory.find(order => order.id === orderId);
+  }
 }
 export default OrderStore;

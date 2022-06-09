@@ -102,7 +102,6 @@ const Home = ({ navigation }) => {
   const onAddressPress = () => navigation.navigate('UserAddress');
   const onDiscoverFoodPress = () => navigation.navigate('Discover');
   const showDrawerMenu = () => appStore.toggleDrawerMenu();
-  cartStore.deliveryFee;
   return (
     <Container disableLast>
       <View style={styles.header}>

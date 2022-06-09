@@ -2,21 +2,29 @@ const { makeObservable, observable, action } = require('mobx');
 
 export class DiscoverStore {
   categoryProducts = [];
-  currentCategoryPage = 1;
   searchProducts = [];
+  searchRestaurants = [];
+  currentCategoryPage = 1;
   currentSearchPage = 1;
+  currentRestaurantPage = 1;
   fetchingProducts = false;
+  fetchingRestaurants = false;
   constructor() {
     makeObservable(this, {
       categoryProducts: observable,
       searchProducts: observable,
-      currentCategoryPage: observable,
+      fetchingProducts: observable,
+      searchRestaurants: observable,
+      fetchingRestaurants: observable,
       setCurrentCategoryPage: action,
       setCurrentSearchPage: action,
       setFavoriteProduct: action,
       setCategoryProducts: action,
       setSearchProducts: action,
-      setFetchingProducts: action
+      setFetchingProducts: action,
+      setSearchRestaurants: action,
+      setCurrentRestaurantPage: action,
+      setFetchingRestaurants: action
     });
   }
   setCategoryProducts(categoryProducts) {
@@ -43,5 +51,14 @@ export class DiscoverStore {
   }
   setFetchingProducts(fetchingProducts) {
     this.fetchingProducts = fetchingProducts;
+  }
+  setSearchRestaurants(searchRestaurants) {
+    this.searchRestaurants = searchRestaurants;
+  }
+  setCurrentRestaurantPage(currentRestaurantPage) {
+    this.currentRestaurantPage = currentRestaurantPage;
+  }
+  setFetchingRestaurants(fetchingRestaurants) {
+    this.fetchingRestaurants = fetchingRestaurants;
   }
 }

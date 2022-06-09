@@ -181,7 +181,7 @@ const CategoryDetail = ({ navigation, route }) => {
             <Image style={styles.sortByArrow} source={require('../assets/images/chevron-down.png')} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.btnFilter}>
+        <TouchableOpacity onPress={toggleShowTypeList} style={styles.btnFilter}>
           <Image style={styles.filterIcon} source={require('../assets/images/filter.png')} />
         </TouchableOpacity>
       </View>

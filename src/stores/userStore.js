@@ -13,8 +13,10 @@ class UserStore {
   addingAddress = false;
   addAddressError = null;
   addresses = [];
+  restaurant = null;
   favoriteRestaurants = {};
   favoriteProducts = {};
+  creatingRestaurant = false;
   constructor() {
     ignorePersistNodes(this, [
       'signingUp',
@@ -24,7 +26,8 @@ class UserStore {
       'verifyingOTP',
       'verifyOTPError',
       'addingAddress',
-      'addAddressError'
+      'addAddressError',
+      'creatingRestaurant'
     ]);
     makeObservable(this, {
       user: observable,
@@ -40,6 +43,8 @@ class UserStore {
       addAddressError: observable,
       favoriteRestaurants: observable,
       favoriteProducts: observable,
+      creatingRestaurant: observable,
+      restaurant: observable,
       setUser: action,
       setLogined: action,
       setSignUpError: action,
@@ -60,7 +65,9 @@ class UserStore {
       addFavoriteProduct: action,
       removeFavoriteProduct: action,
       setAccessToken: action,
-      mainAddress: computed
+      setCreatingRestaurant: action,
+      mainAddress: computed,
+      isRestaurantOwner: computed
     });
   }
 
@@ -84,6 +91,9 @@ class UserStore {
   }
   setUser(user) {
     this.user = user;
+    if (user.restaurant) {
+      this.restaurant = user.restaurant;
+    }
   }
   setLogined(logined) {
     this.logined = logined;
@@ -135,7 +145,6 @@ class UserStore {
       ...this.favoriteRestaurants,
       [restaurantId]: true
     };
-    console.log(this.favoriteRestaurants);
   }
   removeFavoriteRestaurant(restaurantId) {
     delete this.favoriteRestaurants[restaurantId];
@@ -157,6 +166,12 @@ class UserStore {
   }
   setAccessToken(accessToken) {
     this.user.accessToken = accessToken;
+  }
+  setCreatingRestaurant(creatingRestaurant) {
+    this.creatingRestaurant = creatingRestaurant;
+  }
+  get isRestaurantOwner() {
+    return !!this.restaurant;
   }
   get mainAddress() {
     return this.addresses.find(address => address.selected);

@@ -136,3 +136,4 @@ export const uploadImage = async (uri, type = 'image/jpeg') => {
     console.log({ uploadImage: e });
   }
 };
+export const standardizeImageType = type => (type === 'image/jpg' ? 'image/jpeg' : type);

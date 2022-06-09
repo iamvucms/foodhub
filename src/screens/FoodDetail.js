@@ -29,12 +29,11 @@ const targetX = 0;
 const targetY = 0;
 const paddingLeft = setXAxisValue(26);
 const FoodDetail = ({ route, navigation }) => {
-  const {
-    data,
-    image: { x, y, width: imgWidth, height: imgHeight }
-  } = route.params;
+  const { data, animated = true } = route.params;
+  const image = route.params.image || {};
+  const { x = 0, y = 0, width: imgWidth = 999, height: imgHeight = 999 } = image;
   const { top } = useSafeAreaInsets();
-  const anim = useSharedValue(0);
+  const anim = useSharedValue(animated ? 0 : 1);
   const isFocused = useIsFocused();
   const localState = useLocalObservable(() => ({
     addOns: [],
@@ -63,7 +62,6 @@ const FoodDetail = ({ route, navigation }) => {
     }
   }));
   useEffect(() => {
-    anim.value = 0;
     anim.value = withTiming(1);
   }, []);
   const headerStyle = useAnimatedStyle(() => {
@@ -94,7 +92,11 @@ const FoodDetail = ({ route, navigation }) => {
   }, [localState.amount, data, localState.addOns]);
   const onBackPress = () => {
     const callback = () => navigation.goBack();
-    anim.value = withTiming(0, {}, () => runOnJS(callback)());
+    if (animated) {
+      anim.value = withTiming(0, {}, () => runOnJS(callback)());
+    } else {
+      callback();
+    }
   };
   useBackHandler(() => {
     isFocused && onBackPress();

@@ -11,7 +11,7 @@ import { Colors } from '../constants/colors';
 import { userStore } from '../stores';
 import { isAndroid, setValue, setXAxisValue, setYAxisValue } from '../utils';
 
-const OTPVerification = ({ navigation, route }) => {
+const OTPVerification = ({ route }) => {
   const { username } = route.params || {};
   const state = useLocalObservable(() => ({
     otp: '',
@@ -88,13 +88,6 @@ const OTPVerification = ({ navigation, route }) => {
           </FText>
         </TouchableOpacity>
         <Observer>{() => userStore.verifyingOTP && <LoadingIndicatorModal />}</Observer>
-        {/* <Observer>
-          {() =>
-            !!userStore.verifyOTPError && (
-              <ErrorModal error={userStore.verifyOTPError} onRequestClose={() => userStore.setVerifyOTPError(null)} />
-            )
-          }
-        </Observer> */}
         {!isAndroid && <KeyboardSpacer />}
       </View>
     </Container>

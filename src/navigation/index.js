@@ -23,6 +23,8 @@ import FoodDetail from '../screens/FoodDetail';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
+import OrderDetail from '../screens/OrderDetail';
+import RestaurantManagement from '../screens/RestaurantManagement';
 import Orders from '../screens/Orders';
 import OTPVerification from '../screens/OTPVerification';
 import PhoneNumber from '../screens/PhoneNumber';
@@ -32,7 +34,8 @@ import RestaurantDetail from '../screens/RestaurantDetail';
 import RestaurantReviews from '../screens/RestaurantReviews';
 import RestaurantReview from '../screens/RestaurantReviews';
 import SignUp from '../screens/SignUp';
-import UpdateInformation from '../screens/UpdateInformation';
+import SignUpRestaurant from '../screens/SignUpRestaurant';
+import SignUpRole from '../screens/SignUpRole';
 import UserAddress from '../screens/UserAddress';
 import { appStore, userStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
@@ -75,8 +78,9 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="AddAddress" component={AddAddress} />
       <Stack.Screen name="AddressProvinceAndDistrict" component={AddressProvinceAndDistrict} />
       <Stack.Screen name="Checkout" component={Checkout} />
-      <Stack.Screen name="UpdateInformation" component={UpdateInformation} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="OrderDetail" component={OrderDetail} />
+      <Stack.Screen name="RestaurantManagement" component={RestaurantManagement} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (
@@ -87,6 +91,8 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="OTPVerification" component={OTPVerification} />
       <Stack.Screen name="ResetPassword" component={ResetPassword} />
       <Stack.Screen name="PhoneNumber" component={PhoneNumber} />
+      <Stack.Screen name="SignUpRole" component={SignUpRole} />
+      <Stack.Screen name="SignUpRestaurant" component={SignUpRestaurant} />
     </Stack.Navigator>
   );
   return (
