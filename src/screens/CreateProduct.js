@@ -5,7 +5,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { UserActions } from '../actions';
 import { ChevronRightSvg, IncrementSvg } from '../assets/svg';
-import { Container, FText, Header, Padding } from '../components';
+import { Container, FText, Header, LoadingIndicatorModal, Padding } from '../components';
 import { Colors } from '../constants/colors';
 import { FoodCategories } from '../constants/data';
 import { userStore } from '../stores';
@@ -33,6 +33,10 @@ const CreateProduct = ({ navigation, route }) => {
           }
         }))
       : [],
+    loading: false,
+    setLoading: loading => {
+      state.loading = loading;
+    },
     setImage: image => {
       state.image = image;
     },
@@ -86,7 +90,8 @@ const CreateProduct = ({ navigation, route }) => {
   const onAddAddonPress = React.useCallback(() => {
     state.setAddons([...state.addons, { name: '', price: 0, image: null }]);
   }, []);
-  const onSubmitPress = React.useCallback(() => {
+  const onSubmitPress = React.useCallback(async () => {
+    state.setLoading(true);
     if (state.isValid) {
       const data = {
         name: state.name,
@@ -106,11 +111,13 @@ const CreateProduct = ({ navigation, route }) => {
           }))
       };
       if (isEdit) {
-        UserActions.updateRestaurantProduct(data);
+        await UserActions.updateRestaurantProduct(data);
       } else {
-        UserActions.createRestaurantProduct(data);
+        await UserActions.createRestaurantProduct(data);
       }
     }
+    state.setLoading(false);
+    navigation.goBack();
   }, []);
   const renderAddonInput = (addon, index) => {
     if (addon.isDeleted) {
@@ -278,6 +285,7 @@ const CreateProduct = ({ navigation, route }) => {
           </TouchableOpacity>
         )}
       </Observer>
+      <Observer>{() => state.loading && <LoadingIndicatorModal />}</Observer>
     </Container>
   );
 };

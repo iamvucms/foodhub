@@ -54,16 +54,20 @@ const ProductsManagement = ({ navigation }) => {
     return (
       <Pressable style={styles.productItem}>
         <View style={styles.productItemCol}>
-          <Image
-            style={styles.productItemImage}
-            source={{
-              uri: item.image
-            }}
-          />
+          <Observer>
+            {() => (
+              <Image
+                style={styles.productItemImage}
+                source={{
+                  uri: item.image
+                }}
+              />
+            )}
+          </Observer>
           <View>
-            <FText>{item.name}</FText>
+            <Observer>{() => <FText>{item.name}</FText>}</Observer>
             <Padding paddingTop={4} />
-            <FText>${item.price}</FText>
+            <Observer>{() => <FText>${item.price}</FText>}</Observer>
           </View>
         </View>
         <View style={styles.productItemCol}>

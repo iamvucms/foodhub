@@ -283,11 +283,24 @@ const updateRestaurantProduct = async ({ name, price, description, cat_id, image
           const uploadedAddonImage = addon.image.uri.startsWith('file')
             ? await uploadImage(addon.image.uri, standardizeImageType(addon.image.type))
             : addon.image;
-          await post(`${baseUrl}/addons/${addon.id}`, {
-            name: addon.name,
-            price: addon.price,
-            image: uploadedAddonImage.uri
-          });
+          if (addon.id) {
+            await post(`${baseUrl}/addons/${addon.id}`, {
+              name: addon.name,
+              price: addon.price,
+              image: uploadedAddonImage.uri
+            });
+          } else {
+            await post(`${baseUrl}/addons`, {
+              productId,
+              addons: [
+                {
+                  name: addon.name,
+                  price: addon.price,
+                  image: uploadedAddonImage.uri
+                }
+              ]
+            });
+          }
         }
       })
     );

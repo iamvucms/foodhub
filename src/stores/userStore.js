@@ -198,10 +198,9 @@ class UserStore {
   updateRestaurantProduct(product) {
     const index = this.restaurantProducts.findIndex(x => x.id === product.id);
     if (index > -1) {
-      this.restaurantProducts[index] = {
-        ...this.restaurantProducts[index],
-        ...product
-      };
+      Object.keys(product).forEach(key => {
+        this.restaurantProducts[index][key] = product[key];
+      });
     }
   }
   addRestaurantProduct(product) {
