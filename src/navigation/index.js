@@ -41,6 +41,12 @@ import { appStore, userStore } from '../stores';
 import { setValue, setXAxisValue, setYAxisValue } from '../utils';
 import { config } from './config';
 import { navigation, navigationRef } from './navigationRef';
+import ProductsManagement from '../screens/ProductsManagement';
+import CustomersManagement from '../screens/CustomersManagement';
+import OrdersManagement from '../screens/OrdersManagement';
+import UpdateRestaurantInfo from '../screens/UpdateRestaurantInfo';
+import CreateProduct from '../screens/CreateProduct';
+import CreateProductCategory from '../screens/CreateProductCategory';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const AppNavigation = React.memo(() => {
@@ -81,6 +87,12 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="OrderDetail" component={OrderDetail} />
       <Stack.Screen name="RestaurantManagement" component={RestaurantManagement} />
+      <Stack.Screen name="ProductsManagement" component={ProductsManagement} />
+      <Stack.Screen name="CustomersManagement" component={CustomersManagement} />
+      <Stack.Screen name="OrdersManagement" component={OrdersManagement} />
+      <Stack.Screen name="UpdateRestaurantInfo" component={UpdateRestaurantInfo} />
+      <Stack.Screen name="CreateProduct" component={CreateProduct} />
+      <Stack.Screen name="CreateProductCategory" component={CreateProductCategory} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (

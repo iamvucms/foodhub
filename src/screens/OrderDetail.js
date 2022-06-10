@@ -17,22 +17,18 @@ const OrderDetail = ({ navigation, route }) => {
   const observableOrder = orderStore.getOrder(data.id);
   const bottomSheetRef = useRef();
   useEffect(() => {
-    const orders = cartStore.cartToOrders;
     const categoryIds = [];
     const restaurantIds = [];
     const productIds = [];
-    for (let order of orders) {
-      for (let item of order.cartItems) {
-        if (!categoryIds.includes(item.cat_id)) {
-          categoryIds.push(item.cat_id);
-        }
-        if (!productIds.includes(item.product_id)) {
-          productIds.push(item.product_id);
-        }
+    for (let item of data.products) {
+      if (!categoryIds.includes(item.cat_id)) {
+        categoryIds.push(item.cat_id);
       }
-
-      if (!restaurantIds.includes(order.restaurantId)) {
-        restaurantIds.push(order.restaurantId);
+      if (!productIds.includes(item.id)) {
+        productIds.push(item.id);
+      }
+      if (!restaurantIds.includes(item.res_id)) {
+        restaurantIds.push(item.res_id);
       }
     }
     HomeActions.fetchSuggestProducts({
@@ -64,36 +60,6 @@ const OrderDetail = ({ navigation, route }) => {
       </Pressable>
     );
   }, []);
-  const renderOrderItem = order => {
-    return (
-      <React.Fragment key={order.restaurantId}>
-        <View style={styles.order}>
-          <View style={styles.restaurantInfor}>
-            <Image style={styles.restaurantIcon} source={require('../assets/images/shop.png')} />
-            <FText color={Colors.smoky}>{order.restaurant.name}</FText>
-          </View>
-          {order.cartItems.map(product => (
-            <View style={styles.productItem}>
-              <Image
-                style={styles.productImage}
-                source={{
-                  uri: product.image
-                }}
-              />
-              <View style={styles.productInfor}>
-                <FText>{product.amount} x</FText>
-                <View style={styles.productName}>
-                  <FText numberOfLines={2}>{product.name}</FText>
-                </View>
-                <FText color={Colors.smoky}>${product.price}</FText>
-              </View>
-            </View>
-          ))}
-        </View>
-        <View style={styles.separate} />
-      </React.Fragment>
-    );
-  };
   const renderProgressItem = progress => (
     <Observer>
       {() => {
@@ -211,8 +177,86 @@ const OrderDetail = ({ navigation, route }) => {
           })}
         </View>
         <View style={styles.orderInformationContainer}>
-          <Observer>{() => cartStore.cartToOrders.map(renderOrderItem)}</Observer>
+          <View style={styles.order}>
+            <View style={styles.restaurantInfor}>
+              <Image style={styles.restaurantIcon} source={require('../assets/images/shop.png')} />
+              <FText color={Colors.smoky}>{data.restaurant_name}</FText>
+            </View>
+            {data.products.map(product => (
+              <View style={styles.productItem}>
+                <Image
+                  style={styles.productImage}
+                  source={{
+                    uri: product.image
+                  }}
+                />
+                <View style={styles.productInfor}>
+                  <FText>{product.quantity} x</FText>
+                  <View style={styles.productName}>
+                    <FText numberOfLines={2}>
+                      {product.name} + {product.addons.length > 0 ? `(${product.addons.length} addons)` : ''}
+                    </FText>
+                  </View>
+                  <FText color={Colors.smoky}>${product.unit_price}</FText>
+                </View>
+              </View>
+            ))}
+          </View>
+          <View style={styles.separate} />
         </View>
+
+        <Padding paddingHorizontal={20}>
+          <View>
+            <View style={styles.footerLine}>
+              <FText fontSize={16} lineHeight={16}>
+                Subtotal
+              </FText>
+              <FText fontSize={19} lineHeight={19}>
+                ${data.total_price - cartStore.tax * (data.total_price - cartStore.fee) - cartStore.fee}
+                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
+                  {' '}
+                  USD
+                </FText>
+              </FText>
+            </View>
+            <View style={styles.footerLine}>
+              <FText fontSize={16} lineHeight={16}>
+                Tax and Fees ({cartStore.tax * 100}% + {cartStore.fee}$)
+              </FText>
+              <FText fontSize={19} lineHeight={19}>
+                ${cartStore.tax * (data.total_price - cartStore.fee) + cartStore.fee}
+                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
+                  {' '}
+                  USD
+                </FText>
+              </FText>
+            </View>
+            <View style={styles.footerLine}>
+              <FText fontSize={16} lineHeight={16}>
+                Delivery
+              </FText>
+              <FText fontSize={19} lineHeight={19}>
+                ${data.delivery_fee}
+                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
+                  {' '}
+                  USD
+                </FText>
+              </FText>
+            </View>
+            <View style={styles.footerLine}>
+              <FText fontSize={16} lineHeight={16}>
+                Total
+              </FText>
+              <FText fontSize={19} lineHeight={19}>
+                ${data.total_price}
+                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
+                  {' '}
+                  USD
+                </FText>
+              </FText>
+            </View>
+          </View>
+        </Padding>
         <View style={styles.suggestProducts}>
           <Padding padding={20}>
             <FText color={Colors.smoky}>Suggested Products</FText>
@@ -230,73 +274,23 @@ const OrderDetail = ({ navigation, route }) => {
             )}
           </Observer>
         </View>
-        <Padding paddingHorizontal={20}>
-          <View>
-            <View style={styles.footerLine}>
-              <FText fontSize={16} lineHeight={16}>
-                Subtotal
-              </FText>
-              <FText fontSize={19} lineHeight={19}>
-                ${cartStore.subTotal}
-                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
-                  {' '}
-                  USD
-                </FText>
-              </FText>
-            </View>
-            <View style={styles.footerLine}>
-              <FText fontSize={16} lineHeight={16}>
-                Tax and Fees ({cartStore.tax * 100}% + {cartStore.fee}$)
-              </FText>
-              <FText fontSize={19} lineHeight={19}>
-                ${cartStore.taxAndFee}
-                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
-                  {' '}
-                  USD
-                </FText>
-              </FText>
-            </View>
-            <View style={styles.footerLine}>
-              <FText fontSize={16} lineHeight={16}>
-                Delivery
-              </FText>
-              <FText fontSize={19} lineHeight={19}>
-                ${cartStore.deliveryFee}
-                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
-                  {' '}
-                  USD
-                </FText>
-              </FText>
-            </View>
-            <View style={styles.footerLine}>
-              <FText fontSize={16} lineHeight={16}>
-                Total
-              </FText>
-              <FText fontSize={19} lineHeight={19}>
-                ${cartStore.total}
-                <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
-                  {' '}
-                  USD
-                </FText>
-              </FText>
-            </View>
-          </View>
-        </Padding>
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          onPress={onCancelOrder}
-          style={[
-            styles.btnConfirm,
-            {
-              backgroundColor: Colors.white,
-              borderColor: Colors.primary,
-              borderWidth: 1,
-              marginBottom: 10
-            }
-          ]}>
-          <FText color={Colors.primary}>Cancel Order</FText>
-        </TouchableOpacity>
+        {data.status_code === OrderStatusCode.PENDING && (
+          <TouchableOpacity
+            onPress={onCancelOrder}
+            style={[
+              styles.btnConfirm,
+              {
+                backgroundColor: Colors.white,
+                borderColor: Colors.primary,
+                borderWidth: 1,
+                marginBottom: 10
+              }
+            ]}>
+            <FText color={Colors.primary}>Cancel Order</FText>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity onPress={onBackPress} style={styles.btnConfirm}>
           <FText color={Colors.white}>Go Back</FText>
         </TouchableOpacity>

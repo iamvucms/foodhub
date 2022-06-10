@@ -9,7 +9,7 @@ const Container = ({ children, disableFirst, disableLast, statusBarProps }) => {
       {!disableFirst && <View style={[styles.bar, { height: top }]} />}
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" {...statusBarProps} />
       <View style={styles.container}>{children}</View>
-      {!disableLast && <View style={[styles.bar, { height: bottom > 0 ? bottom : 0 }]} />}
+      {!disableLast && <View style={[styles.bar, { height: bottom > 0 ? bottom : 15 }]} />}
     </View>
   );
 };

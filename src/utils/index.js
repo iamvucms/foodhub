@@ -120,7 +120,7 @@ export const uploadImage = async (uri, type = 'image/jpeg') => {
     const formData = new FormData();
     formData.append('photo', {
       uri,
-      name: 'photo.' + type.split('/')[1],
+      name: 'photo.' + uri.split('.').pop(),
       type
     });
     const response = await fetch(`${PREFIX_BASE_URL}${baseUrl}/photo`, {

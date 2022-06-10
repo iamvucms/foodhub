@@ -14,6 +14,9 @@ class UserStore {
   addAddressError = null;
   addresses = [];
   restaurant = null;
+  restaurantProducts = [];
+  restaurantOrders = [];
+  restaurantCustomers = [];
   favoriteRestaurants = {};
   favoriteProducts = {};
   creatingRestaurant = false;
@@ -45,6 +48,9 @@ class UserStore {
       favoriteProducts: observable,
       creatingRestaurant: observable,
       restaurant: observable,
+      restaurantProducts: observable,
+      restaurantOrders: observable,
+      restaurantCustomers: observable,
       setUser: action,
       setLogined: action,
       setSignUpError: action,
@@ -66,6 +72,13 @@ class UserStore {
       removeFavoriteProduct: action,
       setAccessToken: action,
       setCreatingRestaurant: action,
+      setRestaurant: action,
+      setRestaurantProducts: action,
+      removeRestaurantProduct: action,
+      updateRestaurantProduct: action,
+      addRestaurantProduct: action,
+      setRestaurantOrders: action,
+      setRestaurantCustomers: action,
       mainAddress: computed,
       isRestaurantOwner: computed
     });
@@ -169,6 +182,36 @@ class UserStore {
   }
   setCreatingRestaurant(creatingRestaurant) {
     this.creatingRestaurant = creatingRestaurant;
+  }
+  setRestaurant(restaurant) {
+    this.restaurant = {
+      ...this.restaurant,
+      ...restaurant
+    };
+  }
+  setRestaurantProducts(products) {
+    this.restaurantProducts = products;
+  }
+  removeRestaurantProduct(productId) {
+    this.restaurantProducts = this.restaurantProducts.filter(product => product.id !== productId);
+  }
+  updateRestaurantProduct(product) {
+    const index = this.restaurantProducts.findIndex(x => x.id === product.id);
+    if (index > -1) {
+      this.restaurantProducts[index] = {
+        ...this.restaurantProducts[index],
+        ...product
+      };
+    }
+  }
+  addRestaurantProduct(product) {
+    this.restaurantProducts.push(product);
+  }
+  setRestaurantOrders(orders) {
+    this.restaurantOrders = orders;
+  }
+  setRestaurantCustomers(customers) {
+    this.restaurantCustomers = customers;
   }
   get isRestaurantOwner() {
     return !!this.restaurant;

@@ -82,8 +82,8 @@ export const OrderStatusColor = {
   PREPARED: '#2ecc71',
   DELIVERING: '#2ecc71',
   DELIVERED: Colors.primary,
-  REJECTED: '#e74c3c',
-  CANCELLED: '#e74c3c'
+  REJECTED: Colors.danger,
+  CANCELLED: Colors.danger
 };
 export const OrderStatusDescription = {
   PENDING: 'Your order is pending',
@@ -180,5 +180,23 @@ export const orderProgresses = [
     name: 'Delivered',
     status: OrderStatusCode.DELIVERED,
     description: 'Your order is delivered'
+  }
+];
+export const restaurantSettings = [
+  {
+    name: 'Manage Products',
+    routeName: 'ProductsManagement'
+  },
+  {
+    name: 'Manage Orders',
+    routeName: 'OrdersManagement'
+  },
+  {
+    name: 'Manage Customers',
+    routeName: 'CustomersManagement'
+  },
+  {
+    name: 'Update Restaurant Info',
+    routeName: 'UpdateRestaurantInfo'
   }
 ];

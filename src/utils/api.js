@@ -7,6 +7,9 @@ export const get = async (url, params = {}) => {
 export const post = async (url, data = {}) => {
   return await request(url, data, 'post');
 };
+export const deleteRequest = async (url, data = {}) => {
+  return await request(url, data, 'delete');
+};
 export const postDelete = async url => {
   return await request(url, {}, 'delete');
 };
