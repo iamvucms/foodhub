@@ -23,10 +23,8 @@ const OrderCard = ({ item }) => {
   };
   const onConfirmCancelOrder = () => {
     bottomSheetRef.current?.snapTo?.(0);
-    orderActions.updateOrder({
-      data: {
-        status_code: OrderStatusCode.CANCELLED
-      },
+    orderActions.updateOrderStatus({
+      statusCode: OrderStatusCode.CANCELLED,
       orderId: item.id
     });
   };

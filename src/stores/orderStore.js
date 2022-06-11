@@ -20,7 +20,7 @@ class OrderStore {
       setFetchingOrder: action,
       setCurrentPage: action,
       setOrderHistory: action,
-      updateOrder: action,
+      updateOrderStatus: action,
       setCurrentHistoryPage: action
     });
   }
@@ -39,13 +39,13 @@ class OrderStore {
   setOrderHistory(orderHistory) {
     this.orderHistory = orderHistory;
   }
-  updateOrder(orderId, data) {
-    if ([OrderStatusCode.CANCELLED, OrderStatusCode.REJECTED, OrderStatusCode.DELIVERED].includes(data.status_code)) {
+  updateOrderStatus(orderId, statusCode) {
+    if ([OrderStatusCode.CANCELLED, OrderStatusCode.REJECTED, OrderStatusCode.DELIVERED].includes(statusCode)) {
       const order = this.orders.find(order => order.id === orderId);
       if (order) {
         const newOrder = {
           ...order,
-          ...data,
+          status_code: statusCode,
           updated_at: new Date().getTime()
         };
         this.orders = [...this.orders].filter(order => order.id !== orderId);
@@ -56,7 +56,7 @@ class OrderStore {
         if (order.id === orderId) {
           return {
             ...order,
-            ...data,
+            status_code: statusCode,
             updated_at: new Date().getTime()
           };
         }

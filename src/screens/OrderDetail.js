@@ -13,29 +13,31 @@ import orderActions from '../actions/orderActions';
 import { Layout } from '../constants';
 const SUGGEST_ITEM_WIDTH = setValue(250) + setXAxisValue(10);
 const OrderDetail = ({ navigation, route }) => {
-  const { data } = route.params;
+  const { data, isFromOrderManagement = false } = route.params;
   const observableOrder = orderStore.getOrder(data.id);
   const bottomSheetRef = useRef();
   useEffect(() => {
-    const categoryIds = [];
-    const restaurantIds = [];
-    const productIds = [];
-    for (let item of data.products) {
-      if (!categoryIds.includes(item.cat_id)) {
-        categoryIds.push(item.cat_id);
+    if (!isFromOrderManagement) {
+      const categoryIds = [];
+      const restaurantIds = [];
+      const productIds = [];
+      for (let item of data.products) {
+        if (!categoryIds.includes(item.cat_id)) {
+          categoryIds.push(item.cat_id);
+        }
+        if (!productIds.includes(item.id)) {
+          productIds.push(item.id);
+        }
+        if (!restaurantIds.includes(item.res_id)) {
+          restaurantIds.push(item.res_id);
+        }
       }
-      if (!productIds.includes(item.id)) {
-        productIds.push(item.id);
-      }
-      if (!restaurantIds.includes(item.res_id)) {
-        restaurantIds.push(item.res_id);
-      }
+      HomeActions.fetchSuggestProducts({
+        categoryIds,
+        restaurantIds,
+        productIds
+      });
     }
-    HomeActions.fetchSuggestProducts({
-      categoryIds,
-      restaurantIds,
-      productIds
-    });
   }, []);
   const onBackPress = () => {
     navigation.goBack();
@@ -108,10 +110,8 @@ const OrderDetail = ({ navigation, route }) => {
     bottomSheetRef.current?.snapTo?.(1);
   };
   const onConfirmCancelOrder = () => {
-    orderActions.updateOrder({
-      data: {
-        status_code: OrderStatusCode.CANCELLED
-      },
+    orderActions.updateOrderStatus({
+      statusCode: OrderStatusCode.CANCELLED,
       orderId: data.id
     });
     navigation.goBack();
@@ -178,10 +178,14 @@ const OrderDetail = ({ navigation, route }) => {
         </View>
         <View style={styles.orderInformationContainer}>
           <View style={styles.order}>
-            <View style={styles.restaurantInfor}>
-              <Image style={styles.restaurantIcon} source={require('../assets/images/shop.png')} />
-              <FText color={Colors.smoky}>{data.restaurant_name}</FText>
-            </View>
+            {isFromOrderManagement ? (
+              <View style={styles.customerInfor}></View>
+            ) : (
+              <View style={styles.restaurantInfor}>
+                <Image style={styles.restaurantIcon} source={require('../assets/images/shop.png')} />
+                <FText color={Colors.smoky}>{data.restaurant_name}</FText>
+              </View>
+            )}
             {data.products.map(product => (
               <View style={styles.productItem}>
                 <Image
@@ -224,7 +228,7 @@ const OrderDetail = ({ navigation, route }) => {
                 Tax and Fees ({cartStore.tax * 100}% + {cartStore.fee}$)
               </FText>
               <FText fontSize={19} lineHeight={19}>
-                ${cartStore.tax * (data.total_price - cartStore.fee) + cartStore.fee}
+                ${(cartStore.tax * (data.total_price - cartStore.fee) + cartStore.fee).toFixed(2)}
                 <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
                   {' '}
                   USD
@@ -257,23 +261,25 @@ const OrderDetail = ({ navigation, route }) => {
             </View>
           </View>
         </Padding>
-        <View style={styles.suggestProducts}>
-          <Padding padding={20}>
-            <FText color={Colors.smoky}>Suggested Products</FText>
-          </Padding>
-          <Observer>
-            {() => (
-              <FlatList
-                snapToInterval={SUGGEST_ITEM_WIDTH}
-                decelerationRate="fast"
-                data={homeStore.suggestProducts.slice()}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                renderItem={renderSuggestItem}
-              />
-            )}
-          </Observer>
-        </View>
+        {!isFromOrderManagement && (
+          <View style={styles.suggestProducts}>
+            <Padding padding={20}>
+              <FText color={Colors.smoky}>Suggested Products</FText>
+            </Padding>
+            <Observer>
+              {() => (
+                <FlatList
+                  snapToInterval={SUGGEST_ITEM_WIDTH}
+                  decelerationRate="fast"
+                  data={homeStore.suggestProducts.slice()}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={renderSuggestItem}
+                />
+              )}
+            </Observer>
+          </View>
+        )}
       </ScrollView>
       <View style={styles.bottomContainer}>
         {data.status_code === OrderStatusCode.PENDING && (

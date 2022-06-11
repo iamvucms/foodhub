@@ -32,5 +32,6 @@ export const Colors = {
   waterloo: '#7F7D92',
   black_50: 'rgba(0,0,0,0.5)',
   black_75: 'rgba(0,0,0,0.75)',
-  danger: '#FF5252'
+  danger: '#FF5252',
+  success: '#4CAF50'
 };

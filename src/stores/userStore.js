@@ -78,6 +78,7 @@ class UserStore {
       updateRestaurantProduct: action,
       addRestaurantProduct: action,
       setRestaurantOrders: action,
+      updateRestaurantOrderStatus: action,
       setRestaurantCustomers: action,
       mainAddress: computed,
       isRestaurantOwner: computed
@@ -208,6 +209,12 @@ class UserStore {
   }
   setRestaurantOrders(orders) {
     this.restaurantOrders = orders;
+  }
+  updateRestaurantOrderStatus(orderId, status) {
+    const index = this.restaurantOrders.findIndex(x => x.id === orderId);
+    if (index > -1) {
+      this.restaurantOrders[index].status_code = status;
+    }
   }
   setRestaurantCustomers(customers) {
     this.restaurantCustomers = customers;

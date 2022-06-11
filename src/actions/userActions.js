@@ -318,6 +318,33 @@ const updateRestaurantProduct = async ({ name, price, description, cat_id, image
     console.log({ updateRestaurantProduct: e });
   }
 };
+const fetchRestaurantCustomers = async () => {
+  try {
+    if (!userStore.restaurant) {
+      return;
+    }
+    const restaurantId = userStore.restaurant.id;
+    const response = await get(`${baseUrl}/restaurants/${restaurantId}/users`);
+    if (response.success) {
+      userStore.setRestaurantCustomers(response.data);
+    }
+  } catch (e) {
+    console.log({ fetchRestaurantCustomers: e });
+  }
+};
+const fetchRestaurantOrders = async () => {
+  try {
+    if (!userStore.restaurant) {
+      return;
+    }
+    const response = await get(`${baseUrl}/restaurant/orders`);
+    if (response.success) {
+      userStore.setRestaurantOrders(response.data);
+    }
+  } catch (e) {
+    console.log({ fetchRestaurantOrders: e });
+  }
+};
 const fetchUserInformation = async () => {
   const listOfActions = [fetchAddresses];
   return await Promise.all(listOfActions.map(action => action()));
@@ -342,5 +369,7 @@ export default {
   fetchRestaurantProducts,
   deleteRestaurantProduct,
   createRestaurantProduct,
-  updateRestaurantProduct
+  updateRestaurantProduct,
+  fetchRestaurantCustomers,
+  fetchRestaurantOrders
 };

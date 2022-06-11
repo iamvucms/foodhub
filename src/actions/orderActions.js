@@ -1,6 +1,6 @@
 import { baseUrl } from '../constants';
 import { ITEM_EACH_PAGE } from '../constants/data';
-import { orderStore } from '../stores';
+import { orderStore, userStore } from '../stores';
 import { get, post } from '../utils';
 
 const fetchOrders = async ({ isFetchMore = false } = {}) => {
@@ -61,25 +61,18 @@ const createOrder = async ({ products, address, paymentMethod }) => {
     });
   }
 };
-const updateOrder = async ({ orderId, data }) => {
+const updateOrderStatus = async ({ orderId, statusCode }) => {
   try {
-    const response = await post(`${baseUrl}/orders/${orderId}`, data);
+    const response = await post(`${baseUrl}/orders/${orderId}`, {
+      status_code: statusCode
+    });
     if (response.success) {
-      orderStore.setOrders(
-        orderStore.orders.map(order => {
-          if (order.id === orderId) {
-            return {
-              ...order,
-              ...data
-            };
-          }
-          return order;
-        })
-      );
+      orderStore.updateOrderStatus(orderId, statusCode);
+      userStore.updateRestaurantOrderStatus(orderId, statusCode);
     }
   } catch (e) {
     console.log({
-      updateOrder: e
+      updateOrderStatus: e
     });
   }
 };
@@ -90,7 +83,7 @@ const fetchUserOrders = async () => {
 export default {
   fetchOrders,
   fetchOrderHistory,
-  updateOrder,
+  updateOrderStatus,
   fetchUserOrders,
   createOrder
 };
