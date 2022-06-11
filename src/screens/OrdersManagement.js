@@ -4,7 +4,7 @@ import { ConfirmModal, Container, FText, Header, Padding } from '../components';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
 import userActions from '../actions/userActions';
 import { userStore } from '../stores';
-import { getDiffTimeString, setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { getDiffTimeString, setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Layout } from '../constants';
 import { Colors } from '../constants/colors';
 import { OrderStatusCode, OrderStatusColor } from '../constants/data';
@@ -120,7 +120,7 @@ const ProductsManagement = ({ navigation }) => {
     const address = JSON.parse(item.address_text);
     const totalQuantity = item.products.reduce((acc, item) => acc + item.quantity, 0);
     const diffTime = getDiffTimeString(item.created_at);
-    const statusKey = Object.keys(OrderStatusCode)[item.status_code - 1];
+
     const onConfirmPress = () => {
       state.setSelectedOrderId(item.id);
       confirmModalRef.current.snapTo(1);
@@ -168,7 +168,7 @@ const ProductsManagement = ({ navigation }) => {
               <View style={styles.orderProductCol}>
                 <Image
                   source={{
-                    uri: product.image
+                    uri: toCorrectImageUri(product.image)
                   }}
                   style={styles.productImage}
                 />
@@ -181,12 +181,19 @@ const ProductsManagement = ({ navigation }) => {
           ))}
         </View>
         <Padding>
-          <FText>
-            Status:{' '}
-            <FText fontWeight={700} color={OrderStatusColor[statusKey]}>
-              {statusKey}
-            </FText>
-          </FText>
+          <Observer>
+            {() => {
+              const statusKey = Object.keys(OrderStatusCode)[item.status_code - 1];
+              return (
+                <FText>
+                  Status:{' '}
+                  <FText fontWeight={700} color={OrderStatusColor[statusKey]}>
+                    {statusKey}
+                  </FText>
+                </FText>
+              );
+            }}
+          </Observer>
         </Padding>
         <Padding paddingTop={10}>
           <FText fontSize={12}>Delivery to: </FText>

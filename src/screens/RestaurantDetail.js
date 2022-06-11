@@ -2,7 +2,7 @@ import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, Touch
 import React, { useEffect } from 'react';
 import { Container, FoodCard, FoodCarousel, FText, ListPicker, Padding } from '../components';
 import Animated, { BounceIn, BounceOut, interpolate, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Layout } from '../constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
@@ -116,15 +116,7 @@ const RestaurantDetail = ({ navigation, route }) => {
     setCategory: category => {
       localState.category = category;
     },
-    setCategoryId: categoryId => (localState.categoryId = categoryId),
-    get filterdFoodItems() {
-      return foodData.filter(item => {
-        if (localState.category === 'All') {
-          return true;
-        }
-        return item.tag.includes(localState.category);
-      });
-    }
+    setCategoryId: categoryId => (localState.categoryId = categoryId)
   }));
   useEffect(() => {
     animHeader.value = 0;
@@ -135,7 +127,7 @@ const RestaurantDetail = ({ navigation, route }) => {
     animHeader.value = withTiming(0, {}, isFinished => isFinished && runOnJS(callback)());
   };
   const onSeeReviewPress = () =>
-    navigation.navigate('RestaurantReviews', {
+    navigation.navigate('ReviewList', {
       data: toJS(restaurantStore.restaurant)
     });
   const onCategoryChange = category => {
@@ -218,7 +210,7 @@ const RestaurantDetail = ({ navigation, route }) => {
               {() => (
                 <Image
                   source={{
-                    uri: restaurantStore.restaurant.cover_image
+                    uri: toCorrectImageUri(restaurantStore.restaurant.cover_image)
                   }}
                   style={styles.banner}
                 />
@@ -230,7 +222,9 @@ const RestaurantDetail = ({ navigation, route }) => {
           </Animated.View>
           <Animated.View entering={BounceIn}>
             <View style={styles.logoContainer}>
-              <Observer>{() => <Image source={{ uri: restaurantStore.restaurant.logo }} style={styles.logo} />}</Observer>
+              <Observer>
+                {() => <Image source={{ uri: toCorrectImageUri(restaurantStore.restaurant.logo) }} style={styles.logo} />}
+              </Observer>
             </View>
           </Animated.View>
         </View>

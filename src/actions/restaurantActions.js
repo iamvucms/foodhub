@@ -1,7 +1,7 @@
 import { baseUrl } from '../constants';
 import { ITEM_EACH_PAGE } from '../constants/data';
 import { restaurantStore, userStore } from '../stores';
-import { get } from '../utils';
+import { get, post } from '../utils';
 
 const fetchRestaurantProducts = async ({ restaurantId, isFetchMore = false }) => {
   try {
@@ -17,7 +17,8 @@ const fetchRestaurantProducts = async ({ restaurantId, isFetchMore = false }) =>
     if (response.success) {
       const products = response.data.map(product => ({
         ...product,
-        favorite: userStore.getIsFavoriteProduct(product.id)
+        favorite: userStore.getIsFavoriteProduct(product.id),
+        avg_rating: (product.avg_rating || 0).toFixed(1)
       }));
       if (isFetchMore) {
         restaurantStore.setProducts(restaurantStore.products.concat(products));
@@ -30,6 +31,52 @@ const fetchRestaurantProducts = async ({ restaurantId, isFetchMore = false }) =>
     restaurantStore.setFetchingProducts(false);
     console.log({ fetchRestaurantProducts: e });
   }
+};
+const fetchRestaurantReviews = async ({ restaurantId, isFetchMore }) => {
+  restaurantStore.setFetchingReviews(true);
+  try {
+    if (isFetchMore) {
+      restaurantStore.setCurrentReviewPage(restaurantStore.currentReviewPage + 1);
+    } else {
+      restaurantStore.setCurrentReviewPage(0);
+    }
+    const response = await get(
+      `${baseUrl}/restaurants/${restaurantId}/reviews?page=${restaurantStore.currentReviewPage}&limit=${ITEM_EACH_PAGE}`
+    );
+    if (response.success) {
+      if (isFetchMore) {
+        restaurantStore.setReviews(restaurantStore.reviews.concat(response.data));
+      } else {
+        restaurantStore.setReviews(response.data);
+      }
+    }
+  } catch (e) {
+    console.log({ fetchRestaurantReviews: e });
+  }
+  restaurantStore.setFetchingReviews(false);
+};
+const fetchProductReviews = async ({ productId, isFetchMore }) => {
+  restaurantStore.setFetchingReviews(true);
+  try {
+    if (isFetchMore) {
+      restaurantStore.setCurrentReviewPage(restaurantStore.currentReviewPage + 1);
+    } else {
+      restaurantStore.setCurrentReviewPage(0);
+    }
+    const response = await get(
+      `${baseUrl}/products/${productId}/reviews?page=${restaurantStore.currentReviewPage}&limit=${ITEM_EACH_PAGE}`
+    );
+    if (response.success) {
+      if (isFetchMore) {
+        restaurantStore.setReviews(restaurantStore.reviews.concat(response.data));
+      } else {
+        restaurantStore.setReviews(response.data);
+      }
+    }
+  } catch (e) {
+    console.log({ fetchRestaurantReviews: e });
+  }
+  restaurantStore.setFetchingReviews(false);
 };
 const fetchRestaurantCategoryProducts = async ({ restaurantId, categoryId, isFetchMore = false }) => {
   try {
@@ -68,6 +115,19 @@ const fetchRestaurantCategoryProducts = async ({ restaurantId, categoryId, isFet
     console.log({ fetchRestaurantCategoryProducts: e });
   }
 };
+const createReview = async ({ restaurantId, review, orderId, productId }) => {
+  try {
+    if (productId) {
+      await post(`${baseUrl}/products/${productId}/reviews`, { review, orderId });
+    } else if (restaurantId) {
+      await post(`${baseUrl}/restaurants/${restaurantId}/reviews`, { review, orderId });
+    } else {
+      throw new Error('No restaurantId or productId');
+    }
+  } catch (e) {
+    console.log({ createReview: e });
+  }
+};
 const fetchRestaurant = async ({ restaurantId }) => {
   const listOfActions = [fetchRestaurantCategoryProducts, fetchRestaurantProducts];
   return await Promise.all(listOfActions.map(action => action({ restaurantId })));
@@ -75,5 +135,8 @@ const fetchRestaurant = async ({ restaurantId }) => {
 export default {
   fetchRestaurant,
   fetchRestaurantProducts,
-  fetchRestaurantCategoryProducts
+  fetchRestaurantCategoryProducts,
+  fetchRestaurantReviews,
+  fetchProductReviews,
+  createReview
 };

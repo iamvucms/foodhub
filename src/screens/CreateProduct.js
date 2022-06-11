@@ -9,7 +9,7 @@ import { Container, FText, Header, LoadingIndicatorModal, Padding } from '../com
 import { Colors } from '../constants/colors';
 import { FoodCategories } from '../constants/data';
 import { userStore } from '../stores';
-import { setValue, setXAxisValue, setYAxisValue, standardizeImageType } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, standardizeImageType, toCorrectImageUri } from '../utils';
 
 const CreateProduct = ({ navigation, route }) => {
   const { isEdit, product } = route.params || {};
@@ -143,7 +143,11 @@ const CreateProduct = ({ navigation, route }) => {
               borderRadius: setValue(5)
             }
           ]}>
-          {addon.image ? <Image source={{ uri: addon.image?.uri }} style={styles.addonImage} /> : <IncrementSvg color={Colors.primary} />}
+          {addon.image ? (
+            <Image source={{ uri: toCorrectImageUri(addon.image?.uri) }} style={styles.addonImage} />
+          ) : (
+            <IncrementSvg color={Colors.primary} />
+          )}
         </Pressable>
         <View
           style={[
@@ -203,7 +207,7 @@ const CreateProduct = ({ navigation, route }) => {
                   <Image
                     style={styles.image}
                     source={{
-                      uri: state.image?.uri
+                      uri: toCorrectImageUri(state.image?.uri)
                     }}
                   />
                 </Pressable>
@@ -307,7 +311,9 @@ const styles = StyleSheet.create({
     fontSize: setYAxisValue(16),
     fontFamily: 'SofiaPro-Medium',
     marginTop: setYAxisValue(8),
-    width: '100%'
+    width: '100%',
+    height: setYAxisValue(44),
+    color: Colors.typography
   },
   btnImage: {
     marginTop: setYAxisValue(8),

@@ -6,7 +6,7 @@ import FText, { FontSizes, FontWeights } from './FText';
 import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 const FInput = React.forwardRef(
-  ({ title, icon, placeholder, isPassword, containerStyle, inputStyle, inputContainerStyle, ...restProps }, inputRef) => {
+  ({ title, icon, placeholder, isPassword, containerStyle, inputStyle, inputContainerStyle, titleProps = {}, ...restProps }, inputRef) => {
     const [showPassword, setShowPassword] = React.useState(isPassword);
     const toggleShowPassword = React.useCallback(() => setShowPassword(!showPassword), [showPassword]);
     const animBorder = useSharedValue(0);
@@ -24,7 +24,7 @@ const FInput = React.forwardRef(
     return (
       <View style={[containerStyle]}>
         {title && (
-          <FText style={styles.title} color={Colors.typography_60}>
+          <FText style={styles.title} color={Colors.typography_60} {...titleProps}>
             {title}
           </FText>
         )}

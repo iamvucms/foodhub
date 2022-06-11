@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import FText from './FText';
 import { Colors } from '../constants/colors';
 import Padding from './Padding';
@@ -20,7 +20,7 @@ const CartItem = observer(({ item }) => {
       <Image
         style={styles.foodImage}
         source={{
-          uri: item.image
+          uri: toCorrectImageUri(item.image)
         }}
       />
       <View style={styles.cartInfo}>

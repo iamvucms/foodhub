@@ -31,8 +31,7 @@ import PhoneNumber from '../screens/PhoneNumber';
 import Profile from '../screens/Profile';
 import ResetPassword from '../screens/ResetPassword';
 import RestaurantDetail from '../screens/RestaurantDetail';
-import RestaurantReviews from '../screens/RestaurantReviews';
-import RestaurantReview from '../screens/RestaurantReviews';
+import ReviewList from '../screens/ReviewList';
 import SignUp from '../screens/SignUp';
 import SignUpRestaurant from '../screens/SignUpRestaurant';
 import SignUpRole from '../screens/SignUpRole';
@@ -47,6 +46,8 @@ import OrdersManagement from '../screens/OrdersManagement';
 import UpdateRestaurantInfo from '../screens/UpdateRestaurantInfo';
 import CreateProduct from '../screens/CreateProduct';
 import CreateProductCategory from '../screens/CreateProductCategory';
+import ServerConfigurations from '../screens/ServerConfigurations';
+import WriteReview from '../screens/WriteReview';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const AppNavigation = React.memo(() => {
@@ -68,7 +69,6 @@ const AppNavigation = React.memo(() => {
         }}
         component={FoodDetail}
       />
-      <Stack.Screen name="RestaurantReview" component={RestaurantReview} />
       <Stack.Screen name="CategoryDetail" component={CategoryDetail} />
       <Stack.Screen
         options={{
@@ -78,7 +78,8 @@ const AppNavigation = React.memo(() => {
         name="RestaurantDetail"
         component={RestaurantDetail}
       />
-      <Stack.Screen name="RestaurantReviews" component={RestaurantReviews} />
+      <Stack.Screen name="ReviewList" component={ReviewList} />
+      <Stack.Screen name="WriteReview" component={WriteReview} />
       <Stack.Screen name="Discover" component={Discover} />
       <Stack.Screen name="UserAddress" component={UserAddress} />
       <Stack.Screen name="AddAddress" component={AddAddress} />
@@ -93,6 +94,7 @@ const AppNavigation = React.memo(() => {
       <Stack.Screen name="UpdateRestaurantInfo" component={UpdateRestaurantInfo} />
       <Stack.Screen name="CreateProduct" component={CreateProduct} />
       <Stack.Screen name="CreateProductCategory" component={CreateProductCategory} />
+      <Stack.Screen name="ServerConfigurations" component={ServerConfigurations} />
     </Stack.Navigator>
   );
   const OnboardingStack = () => (

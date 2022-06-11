@@ -22,3 +22,4 @@ export { default as RestaurantMiniCard } from './RestaurantMiniCard';
 export { default as LoadingIndicatorModal } from './LoadingIndicatorModal';
 export { default as ErrorModal } from './ErrorModal';
 export { default as ConfirmModal } from './ConfirmModal';
+export { default as RatingInput } from './RatingInput';

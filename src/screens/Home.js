@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, Image, View, ScrollView, Pressable } from 'react-native';
 import React, { useEffect } from 'react';
 import { Container, FInput, FoodCarousel, FoodCategoryList, FText, RestaurantCarousel } from '../components';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 import { ChevronRightSvg, SearchSvg } from '../assets/svg';
 import { appStore, cartStore, homeStore, orderStore, userStore, useStore } from '../stores';
@@ -128,7 +128,7 @@ const Home = ({ navigation }) => {
           </Observer>
         </Pressable>
         <TouchableOpacity style={styles.btnMenu}>
-          <Observer>{() => <Image style={styles.avatar} source={{ uri: userStore.user.avatar }} />}</Observer>
+          <Observer>{() => <Image style={styles.avatar} source={{ uri: toCorrectImageUri(userStore.user.avatar) }} />}</Observer>
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.mainContainer}>

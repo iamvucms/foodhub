@@ -146,6 +146,10 @@ export const profileSettings = [
     routeName: 'ChangePassword'
   },
   {
+    name: 'Server Configurations',
+    routeName: 'ServerConfigurations'
+  },
+  {
     name: 'Logout',
     routeName: 'Logout'
   }

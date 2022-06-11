@@ -1,10 +1,10 @@
 import { Platform } from 'react-native';
-import { baseUrl, Layout, PREFIX_BASE_URL } from '../constants';
+import { baseUrl, getPrefixBaseUrl, Layout } from '../constants';
 import AsyncStorge from '@react-native-async-storage/async-storage';
 import { ignore } from 'mobx-sync';
 import dayjs from 'dayjs';
 import { post } from './api';
-import { userStore } from '../stores';
+import { appStore, userStore } from '../stores';
 import { UserActions } from '../actions';
 export * from './api';
 const {
@@ -123,7 +123,7 @@ export const uploadImage = async (uri, type = 'image/jpeg') => {
       name: 'photo.' + uri.split('.').pop(),
       type
     });
-    const response = await fetch(`${PREFIX_BASE_URL}${baseUrl}/photo`, {
+    const response = await fetch(`${getPrefixBaseUrl()}${baseUrl}/photo`, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: 'Bearer ' + userStore.user.accessToken
@@ -137,3 +137,4 @@ export const uploadImage = async (uri, type = 'image/jpeg') => {
   }
 };
 export const standardizeImageType = type => (type === 'image/jpg' ? 'image/jpeg' : type);
+export const toCorrectImageUri = (uri = '') => (uri || '').replace('localhost', appStore.privateIp);

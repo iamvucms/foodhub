@@ -4,13 +4,17 @@ import { ignorePersistNodes } from '../utils';
 class RestaurantStore {
   restaurant = null;
   products = [];
+  reviews = [];
   categoryProducts = [];
+  hiddenReviewIds = [];
   fetchingProducts = false;
   fetchingMoreProducts = false;
   fetchingCategoryProducts = false;
   fetchingMoreCategoryProducts = false;
   currentPage = 0;
   currentCategoryPage = 0;
+  fetchingReviews = false;
+  currentReviewPage = 0;
   constructor() {
     ignorePersistNodes(this, [
       'fetchingProducts',
@@ -18,20 +22,27 @@ class RestaurantStore {
       'currentCategoryPage',
       'fetchingCategoryProducts',
       'fetchingMoreCategoryProducts',
-      'fetchingMoreProducts'
+      'fetchingMoreProducts',
+      'fetchingReviews',
+      'currentReviewPage'
     ]);
     makeObservable(this, {
       restaurant: observable,
       products: observable,
+      reviews: observable,
       categoryProducts: observable,
       fetchingProducts: observable,
       fetchingMoreProducts: observable,
       fetchingCategoryProducts: observable,
       fetchingMoreCategoryProducts: observable,
-      currentPage: observable,
-      currentCategoryPage: observable,
+      fetchingReviews: observable,
+      hiddenReviewIds: observable,
+      addHiddenReviewId: action,
+      removeHiddenReviewId: action,
       setRestaurant: action,
       setProducts: action,
+      setReviews: action,
+      setFetchingReviews: action,
       setCategoryProducts: action,
       setFetchingProducts: action,
       setFetchingCategoryProducts: action,
@@ -43,11 +54,20 @@ class RestaurantStore {
       setFavoriteProduct: action
     });
   }
+  addHiddenReviewId(reviewId) {
+    this.hiddenReviewIds.push(reviewId);
+  }
+  removeHiddenReviewId(reviewId) {
+    this.hiddenReviewIds = this.hiddenReviewIds.filter(id => id !== reviewId);
+  }
   setRestaurant(restaurant) {
     this.restaurant = restaurant;
   }
   setProducts(products) {
     this.products = products;
+  }
+  setReviews(reviews) {
+    this.reviews = reviews;
   }
   setCategoryProducts(categoryProducts) {
     this.categoryProducts = categoryProducts;
@@ -64,11 +84,17 @@ class RestaurantStore {
   setCurrentCategoryPage(currentCategoryPage) {
     this.currentCategoryPage = currentCategoryPage;
   }
+  setCurrentReviewPage(currentReviewPage) {
+    this.currentReviewPage = currentReviewPage;
+  }
   setFetchingMoreProducts(fetchingMoreProducts) {
     this.fetchingMoreProducts = fetchingMoreProducts;
   }
   setFetchingMoreCategoryProducts(fetchingMoreCategoryProducts) {
     this.fetchingMoreCategoryProducts = fetchingMoreCategoryProducts;
+  }
+  setFetchingReviews(fetchingReviews) {
+    this.fetchingReviews = fetchingReviews;
   }
   setFavoriteRestaurant(restaurantId, favorite) {
     if (this.restaurant.id === restaurantId) {

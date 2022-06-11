@@ -18,7 +18,7 @@ import { AmountInput, ButtonIcon, Container, FText, Padding } from '../component
 import { Layout } from '../constants';
 import { Colors } from '../constants/colors';
 import { cartStore, homeStore } from '../stores';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { uid } from 'uid';
 import { observer, Observer, useLocalObservable } from 'mobx-react-lite';
 import { UserActions } from '../actions';
@@ -98,6 +98,12 @@ const FoodDetail = ({ route, navigation }) => {
       callback();
     }
   };
+  const onSeeReviewPress = React.useCallback(() => {
+    navigation.navigate('ReviewList', {
+      data,
+      isProductReviews: true
+    });
+  }, []);
   useBackHandler(() => {
     isFocused && onBackPress();
     return true;
@@ -108,7 +114,7 @@ const FoodDetail = ({ route, navigation }) => {
         <Animated.View style={[styles.header, headerStyle]}>
           <Image
             source={{
-              uri: data.image
+              uri: toCorrectImageUri(data.image)
             }}
             style={styles.banner}
           />
@@ -158,7 +164,7 @@ const FoodDetail = ({ route, navigation }) => {
               ({data.total_reviews})
             </FText>
             <Padding paddingRight={9} />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onSeeReviewPress}>
               <FText fontSize={13} lineHeight={13} color={Colors.primary}>
                 See Review
               </FText>
@@ -198,7 +204,7 @@ const AddonList = observer(({ options, addOns, toggleAddOn }) => (
             <Image
               style={styles.addonImage}
               source={{
-                uri: item.image
+                uri: toCorrectImageUri(item.image)
               }}
             />
             <Padding paddingRight={15} />

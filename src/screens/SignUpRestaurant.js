@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View, Image, ScrollView, Pressable } from 'react-native';
 import React, { useRef } from 'react';
 import { BackButton, Container, ErrorModal, FInput, FText, LoadingIndicatorModal } from '../components';
-import { setValue, setXAxisValue, setYAxisValue, standardizeImageType } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, standardizeImageType, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
 import { userStore } from '../stores';
@@ -97,7 +97,7 @@ const SignUpRestaurant = ({ navigation, route }) => {
                     <Image
                       style={styles.logo}
                       source={{
-                        uri: state.logo?.uri
+                        uri: toCorrectImageUri(state.logo?.uri)
                       }}
                     />
                   )}
@@ -116,7 +116,7 @@ const SignUpRestaurant = ({ navigation, route }) => {
                     <Image
                       style={styles.cover}
                       source={{
-                        uri: state.cover?.uri
+                        uri: toCorrectImageUri(state.cover?.uri)
                       }}
                     />
                   )}

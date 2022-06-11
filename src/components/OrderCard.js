@@ -51,6 +51,11 @@ const OrderCard = ({ item }) => {
       data: item
     });
   };
+  const onReviewPress = () => {
+    navigation.navigate('WriteReview', {
+      data: item
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -170,30 +175,39 @@ const OrderCard = ({ item }) => {
           <FText>{`$${item.total_price}`}</FText>
         </View>
       </View>
-      <View style={styles.actions}>
-        {item.status_code === OrderStatusCode.PENDING && (
-          <TouchableOpacity onPress={onCancelPress} style={styles.btnAction}>
-            <FText fontSize={15}>Cancel</FText>
-          </TouchableOpacity>
+      <Observer>
+        {() => (
+          <View style={styles.actions}>
+            {item.status_code === OrderStatusCode.PENDING && (
+              <TouchableOpacity onPress={onCancelPress} style={styles.btnAction}>
+                <FText fontSize={15}>Cancel</FText>
+              </TouchableOpacity>
+            )}
+            {[OrderStatusCode.CANCELLED, OrderStatusCode.REJECTED].includes(item.status_code) && (
+              <TouchableOpacity onPress={onReorderPress} style={styles.btnAction}>
+                <FText fontSize={15}>Re order</FText>
+              </TouchableOpacity>
+            )}
+            {item.status_code === OrderStatusCode.DELIVERED && (
+              <TouchableOpacity onPress={onReviewPress} style={styles.btnAction}>
+                <FText fontSize={15}>Write Review</FText>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              onPress={onDetailPress}
+              style={[
+                styles.btnAction,
+                {
+                  backgroundColor: Colors.primary
+                }
+              ]}>
+              <FText fontSize={15} color={Colors.white}>
+                Detail
+              </FText>
+            </TouchableOpacity>
+          </View>
         )}
-        {[OrderStatusCode.CANCELLED, OrderStatusCode.REJECTED, OrderStatusCode.DELIVERED].includes(item.status_code) && (
-          <TouchableOpacity onPress={onReorderPress} style={styles.btnAction}>
-            <FText fontSize={15}>Re order</FText>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          onPress={onDetailPress}
-          style={[
-            styles.btnAction,
-            {
-              backgroundColor: Colors.primary
-            }
-          ]}>
-          <FText fontSize={15} color={Colors.white}>
-            Detail
-          </FText>
-        </TouchableOpacity>
-      </View>
+      </Observer>
       <ConfirmModal
         ref={bottomSheetRef}
         onConfirm={onConfirmCancelOrder}

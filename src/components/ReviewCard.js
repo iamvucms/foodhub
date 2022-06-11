@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import FText from './FText';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 import dayjs from 'dayjs';
 import Padding from './Padding';
@@ -14,7 +14,7 @@ const ReviewCard = ({ data, onOptionPress }) => {
           <Image
             style={styles.avatar}
             source={{
-              uri: 'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
+              uri: toCorrectImageUri(data.reviewer_avatar)
             }}
           />
           <View style={styles.rating}>
@@ -25,7 +25,7 @@ const ReviewCard = ({ data, onOptionPress }) => {
         </View>
         <View style={styles.mainInfo}>
           <FText fontSize={15} lineHeight={15}>
-            {data.author.name}
+            {data.reviewer_name}
           </FText>
           <Padding paddingTop={5} />
           <FText fontSize={13} color={Colors.aslo_gray} lineHeight={13}>

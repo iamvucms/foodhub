@@ -1,13 +1,11 @@
-import { StyleSheet, Image, View, TouchableOpacity, Pressable } from 'react-native';
-import React, { useRef } from 'react';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
-import FText from './FText';
-import { Colors } from '../constants/colors';
-import { HeartSvg, StarSvg } from '../assets/svg';
 import { Observer } from 'mobx-react-lite';
-import { homeStore, restaurantStore } from '../stores';
-import userActions from '../actions/userActions';
+import React, { useRef } from 'react';
+import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { UserActions } from '../actions';
+import { HeartSvg, StarSvg } from '../assets/svg';
+import { Colors } from '../constants/colors';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
+import FText from './FText';
 const RestaurantCard = ({ item, onPress }) => {
   const imageRef = useRef();
   const onCardPress = React.useCallback(() => {
@@ -17,7 +15,7 @@ const RestaurantCard = ({ item, onPress }) => {
   }, []);
   return (
     <Pressable onPress={onCardPress} style={styles.container}>
-      <Image ref={imageRef} style={styles.banner} source={{ uri: item.cover_image }} />
+      <Image ref={imageRef} style={styles.banner} source={{ uri: toCorrectImageUri(item.cover_image) }} />
       <View style={styles.headerInfo}>
         <View style={styles.reviewInfo}>
           <FText fontSize={12} lineHeight={12}>

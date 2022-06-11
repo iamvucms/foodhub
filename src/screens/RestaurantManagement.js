@@ -2,7 +2,7 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react
 import React from 'react';
 import { Container, FText, Header, Padding } from '../components';
 import { userStore } from '../stores';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { ChevronRightSvg, EditSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
 import { restaurantSettings } from '../constants/data';
@@ -50,7 +50,7 @@ const RestaurantManagement = ({ navigation }) => {
               <Image
                 style={styles.cover}
                 source={{
-                  uri: userStore.restaurant.cover_image
+                  uri: toCorrectImageUri(userStore.restaurant.cover_image)
                 }}
               />
             )}
@@ -65,7 +65,7 @@ const RestaurantManagement = ({ navigation }) => {
               <Image
                 style={styles.logo}
                 source={{
-                  uri: userStore.restaurant.logo
+                  uri: toCorrectImageUri(userStore.restaurant.logo)
                 }}
               />
             )}

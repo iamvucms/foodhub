@@ -4,7 +4,7 @@ import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-nati
 import { UserActions } from '../actions';
 import { HeartSvg, StarSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import FText from './FText';
 import Padding from './Padding';
 const FoodCard = ({ item = data, containerStyle, bannerStyle, onPress }) => {
@@ -22,7 +22,7 @@ const FoodCard = ({ item = data, containerStyle, bannerStyle, onPress }) => {
   }, []);
   return (
     <Pressable onPress={onCardPress} style={[styles.container, containerStyle]}>
-      <Image ref={imageRef} style={[styles.banner, bannerStyle]} source={{ uri: item.image }} />
+      <Image ref={imageRef} style={[styles.banner, bannerStyle]} source={{ uri: toCorrectImageUri(item.image) }} />
       <View style={styles.headerInfo}>
         <View style={styles.priceInfo}>
           <FText fontSize={15} lineHeight={15}>

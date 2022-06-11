@@ -1,6 +1,6 @@
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 import { Layout } from '../constants';
 import { HeartSvg } from '../assets/svg';
@@ -15,7 +15,7 @@ const RestaurantMiniCard = ({ data, containerStyle }) => {
           <Image
             style={styles.logo}
             source={{
-              uri: data.logo
+              uri: toCorrectImageUri(data.logo)
             }}
           />
           <View style={styles.rating}>

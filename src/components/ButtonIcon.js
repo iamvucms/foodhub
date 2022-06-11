@@ -4,7 +4,7 @@ import { setValue } from '../utils';
 import FText from './FText';
 import { Colors } from '../constants/colors';
 
-const ButtonIcon = ({ text, icon: Icon, onPress, disabled }) => {
+const ButtonIcon = ({ text, icon: Icon, onPress, disabled, style }) => {
   return (
     <TouchableOpacity
       disabled={disabled}
@@ -16,7 +16,8 @@ const ButtonIcon = ({ text, icon: Icon, onPress, disabled }) => {
         },
         disabled && {
           backgroundColor: Colors.gray
-        }
+        },
+        style
       ]}>
       {Icon && (
         <View style={styles.iconContainer}>

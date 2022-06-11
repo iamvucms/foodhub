@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Container, FText, Header, Padding } from '../components';
 import userActions from '../actions/userActions';
 import { userStore } from '../stores';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 
 const ProductsManagement = ({ navigation }) => {
@@ -25,7 +25,7 @@ const ProductsManagement = ({ navigation }) => {
           <Image
             style={styles.avatar}
             source={{
-              uri: item.avatar
+              uri: toCorrectImageUri(item.avatar)
             }}
           />
           <View>

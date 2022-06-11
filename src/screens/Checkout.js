@@ -4,7 +4,7 @@ import { CartItem, CartSummary, Container, FText, Header, Padding } from '../com
 import { navigation } from '../navigation/navigationRef';
 import { ChevronRightSvg, GpsSvg, IncrementSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { cartStore, homeStore, userStore } from '../stores';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
 import { HomeActions } from '../actions';
@@ -69,7 +69,7 @@ const Checkout = () => {
     };
     return (
       <View style={styles.suggestItem}>
-        <Image source={{ uri: item.image }} style={styles.suggestImage} />
+        <Image source={{ uri: toCorrectImageUri(item.image) }} style={styles.suggestImage} />
         <View style={styles.suggestItemInfor}>
           <FText>{item.name}</FText>
           <View style={styles.suggestItemPrice}>
@@ -95,7 +95,7 @@ const Checkout = () => {
               <Image
                 style={styles.productImage}
                 source={{
-                  uri: product.image
+                  uri: toCorrectImageUri(product.image)
                 }}
               />
               <View style={styles.productInfor}>

@@ -9,7 +9,8 @@ const fetchRestaurants = async ({ isFetchMore = false } = {}) => {
     if (response.success) {
       const restaurants = response.data.map(restaurant => ({
         ...restaurant,
-        favorite: userStore.getIsFavoriteRestaurant(restaurant.id)
+        favorite: userStore.getIsFavoriteRestaurant(restaurant.id),
+        avg_rating: (restaurant.avg_rating || 0).toFixed(1)
       }));
       if (isFetchMore) {
         homeStore.setRestaurants([...homeStore.restaurants, ...restaurants]);
@@ -27,7 +28,8 @@ const fetchProducts = async ({ isFetchMore = false } = {}) => {
     if (response.success) {
       const products = response.data.map(product => ({
         ...product,
-        favorite: userStore.getIsFavoriteProduct(product.id)
+        favorite: userStore.getIsFavoriteProduct(product.id),
+        avg_rating: (product.avg_rating || 0).toFixed(1)
       }));
       if (isFetchMore) {
         homeStore.setProducts([...homeStore.products, ...products]);

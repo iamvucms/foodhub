@@ -1,143 +1,108 @@
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useRef } from 'react';
-import { BottomSheet, Container, FInput, FText, Header, Padding, ReviewCard } from '../components';
-import { isAndroid, setValue, setXAxisValue, setYAxisValue } from '../utils';
-import { Colors } from '../constants/colors';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
-import { Layout } from '../constants';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useEffect, useRef } from 'react';
+import { FlatList, Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-const mockReviews = [
-  {
-    id: 1,
-    author: {
-      name: 'John Doe',
-      avatar:
-        'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-    },
-    rating: 5,
-    content: 'I love this place! I love this place! I love this place!',
-    created_at: new Date().getTime()
-  },
-  {
-    id: 2,
-    author: {
-      name: 'John Doe',
-      avatar:
-        'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-    },
-    rating: 5,
-    content: 'I love this place! I love this place! I love this place!',
-    created_at: new Date().getTime()
-  },
-  {
-    id: 3,
-    author: {
-      name: 'John Doe',
-      avatar:
-        'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-    },
-    rating: 5,
-    content: 'I love this place! I love this place! I love this place!',
-    created_at: new Date().getTime()
-  },
-  {
-    id: 4,
-    author: {
-      name: 'John Doe',
-      avatar:
-        'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-    },
-    rating: 5,
-    content: 'I love this place! I love this place! I love this place!',
-    created_at: new Date().getTime()
-  },
-  {
-    id: 5,
-    author: {
-      name: 'John Doe',
-      avatar:
-        'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-    },
-    rating: 5,
-    content: 'I love this place! I love this place! I love this place!',
-    created_at: new Date().getTime()
-  }
-];
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import restaurantActions from '../actions/restaurantActions';
+import { BottomSheet, Container, FText, Header, Padding, ReviewCard } from '../components';
+import { Layout } from '../constants';
+import { Colors } from '../constants/colors';
+import { restaurantStore } from '../stores';
+import { isAndroid, setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
+
 const { height } = Layout.window;
 const RestaurantReviews = ({ navigation, route }) => {
-  const { data } = route.params;
+  const { data, isProductReviews } = route.params;
   const { bottom } = useSafeAreaInsets();
   const bottomSheetRef = useRef();
-  const localState = useLocalObservable(() => ({
-    review: {},
+  const state = useLocalObservable(() => ({
+    review: null,
     setReview: review => {
-      localState.review = review;
+      state.review = review;
     }
   }));
+  useEffect(() => {
+    if (isProductReviews) {
+      restaurantActions.fetchProductReviews({
+        productId: data.id
+      });
+    } else {
+      restaurantActions.fetchRestaurantReviews({
+        restaurantId: data.id
+      });
+    }
+  }, []);
   const onLeftPress = React.useCallback(() => navigation.goBack(), []);
+  const onHideReviewPress = React.useCallback(() => {
+    bottomSheetRef.current.snapTo(0);
+    restaurantStore.addHiddenReviewId(state.review.id);
+    state.setReview(null);
+  }, []);
   const renderReviewItem = React.useCallback(({ item }) => {
     const onOptionPress = () => {
       bottomSheetRef.current.snapTo(1);
-      localState.setReview(item);
+      state.setReview(item);
     };
     return (
-      <View style={styles.cardItem}>
-        <ReviewCard onOptionPress={onOptionPress} data={item} />
-      </View>
+      <Observer>
+        {() => {
+          const isHidden = restaurantStore.hiddenReviewIds.includes(item.id);
+          const onPress = () => {
+            if (isHidden) {
+              restaurantStore.removeHiddenReviewId(item.id);
+            }
+          };
+          return (
+            <Pressable
+              onPress={onPress}
+              style={[
+                styles.cardItem,
+                isHidden && {
+                  opacity: 0.3
+                }
+              ]}>
+              <ReviewCard onOptionPress={onOptionPress} data={item} />
+            </Pressable>
+          );
+        }}
+      </Observer>
     );
   }, []);
-  const renderListHeader = () => (
-    <View style={styles.mainContainer}>
-      <View style={styles.reviewInputContainer}>
-        <FInput
-          fontSize={16}
-          icon={
-            <Image
-              source={{
-                uri: 'https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80'
-              }}
-              style={styles.avatar}
-            />
-          }
-          placeholder="Write your review"
-          placeholderTextColor={Colors.aslo_gray}
-        />
-      </View>
-    </View>
-  );
   const reviewKeyExtractor = item => `review_${item.id}`;
   return (
     <Container>
       <Header onLeftPress={onLeftPress} title="Reviews" />
-      <FlatList ListHeaderComponent={renderListHeader} data={mockReviews} renderItem={renderReviewItem} keyExtractor={reviewKeyExtractor} />
+      <Padding paddingTop={20} />
+      <Observer>
+        {() => <FlatList data={restaurantStore.reviews.slice()} renderItem={renderReviewItem} keyExtractor={reviewKeyExtractor} />}
+      </Observer>
       {!isAndroid && <KeyboardSpacer topSpacing={-bottom} />}
       <BottomSheet snapPoints={[0, height / 2]} ref={bottomSheetRef}>
         <View style={styles.bottomSheetContainer}>
           <Observer>
             {() => (
               <React.Fragment>
-                {localState.review.author && (
+                {state.review && (
                   <View style={styles.reviewInfo}>
                     <View style={styles.reviewAvatarContainer}>
                       <Image
                         style={styles.reviewAvatar}
                         source={{
-                          uri: localState.review.author.avatar
+                          uri: toCorrectImageUri(state.review.reviewer_avatar)
                         }}
                       />
                       <View style={styles.rating}>
                         <FText fontSize={10} color={Colors.white}>
-                          {localState.review.rating.toFixed(1)}
+                          {state.review.rating.toFixed(1)}
                         </FText>
                       </View>
                     </View>
                     <FText fontSize="medium" fontWeight={700}>
-                      {localState.review.author.name}
+                      {state.review.reviewer_name}
                     </FText>
                     <View style={styles.reviewContent}>
                       <FText fontSize="small" color={Colors.aslo_gray}>
-                        {localState.review.content}
+                        {state.review.content}
                       </FText>
                     </View>
                   </View>
@@ -146,7 +111,7 @@ const RestaurantReviews = ({ navigation, route }) => {
             )}
           </Observer>
           <View style={styles.spacer} />
-          <TouchableOpacity style={styles.btnAction}>
+          <TouchableOpacity onPress={onHideReviewPress} style={styles.btnAction}>
             <FText>Hide this Review</FText>
           </TouchableOpacity>
           <TouchableOpacity style={styles.btnAction}>
@@ -173,7 +138,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: setValue(10),
     borderColor: 'rgba(238, 238, 238, 1)',
-    borderWidth: setValue(1)
+    borderWidth: setValue(1),
+    paddingHorizontal: setXAxisValue(10)
+  },
+  reviewInput: {
+    flex: 1,
+    paddingLeft: setXAxisValue(10),
+    color: Colors.typography,
+    fontSize: setYAxisValue(16),
+    height: '100%',
+    fontFamily: 'SofiaPro-Medium'
   },
   avatarContainer: {
     height: '100%',

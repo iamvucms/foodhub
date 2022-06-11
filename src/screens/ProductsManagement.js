@@ -4,7 +4,7 @@ import { ConfirmModal, Container, FText, Header, Padding } from '../components';
 import { UserActions } from '../actions';
 import { userStore } from '../stores';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { Colors } from '../constants/colors';
 import { EditSvg, IncrementSvg, TrashSvg } from '../assets/svg';
 import { toJS } from 'mobx';
@@ -59,7 +59,7 @@ const ProductsManagement = ({ navigation }) => {
               <Image
                 style={styles.productItemImage}
                 source={{
-                  uri: item.image
+                  uri: toCorrectImageUri(item.image)
                 }}
               />
             )}

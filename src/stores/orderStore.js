@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from 'mobx';
+import { userStore } from '.';
 import { OrderStatusCode } from '../constants/data';
 import { ignorePersistNodes } from '../utils';
 
@@ -40,32 +41,17 @@ class OrderStore {
     this.orderHistory = orderHistory;
   }
   updateOrderStatus(orderId, statusCode) {
-    if ([OrderStatusCode.CANCELLED, OrderStatusCode.REJECTED, OrderStatusCode.DELIVERED].includes(statusCode)) {
-      const order = this.orders.find(order => order.id === orderId);
-      if (order) {
-        const newOrder = {
-          ...order,
-          status_code: statusCode,
-          updated_at: new Date().getTime()
-        };
-        this.orders = [...this.orders].filter(order => order.id !== orderId);
-        this.orderHistory = [...this.orderHistory, newOrder].sort((a, b) => b.id - a.id);
-      }
-    } else {
-      this.orders = this.orders.map(order => {
-        if (order.id === orderId) {
-          return {
-            ...order,
-            status_code: statusCode,
-            updated_at: new Date().getTime()
-          };
-        }
-        return order;
-      });
+    const order = this.orders.find(order => order.id === orderId);
+    if (order) {
+      order.status_code = statusCode;
     }
   }
   getOrder(orderId) {
-    return this.orders.find(order => order.id === orderId) || this.orderHistory.find(order => order.id === orderId);
+    return (
+      this.orders.find(order => order.id === orderId) ||
+      this.orderHistory.find(order => order.id === orderId) ||
+      userStore.restaurantOrders.find(order => order.id === orderId)
+    );
   }
 }
 export default OrderStore;

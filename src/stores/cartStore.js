@@ -80,10 +80,9 @@ class CartStore {
     }, 0);
   }
   get subTotal() {
-    return this.cartItems.reduce(
-      (sum, item) => sum + item.price * item.amount + item.options.reduce((sum2, item2) => sum2 + item2.price, 0),
-      0
-    );
+    return this.cartItems
+      .reduce((sum, item) => sum + item.price * item.amount + item.options.reduce((sum2, item2) => sum2 + item2.price, 0), 0)
+      .toFixed(2);
   }
   get taxAndFee() {
     return (this.tax * this.subTotal - -this.fee).toFixed(2);

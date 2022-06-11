@@ -4,18 +4,19 @@ import { CartItem, CartSummary, ConfirmModal, Container, FText, Header, Padding 
 import { navigation } from '../navigation/navigationRef';
 import { ChevronRightSvg, GpsSvg, IncrementSvg } from '../assets/svg';
 import { Colors } from '../constants/colors';
-import { setValue, setXAxisValue, setYAxisValue } from '../utils';
+import { setValue, setXAxisValue, setYAxisValue, toCorrectImageUri } from '../utils';
 import { cartStore, homeStore, orderStore, userStore } from '../stores';
 import { Observer, useLocalObservable } from 'mobx-react-lite';
 import { HomeActions } from '../actions';
-import { orderProgresses, OrderStatusCode, PaymentMethods } from '../constants/data';
+import { orderProgresses, OrderStatus, OrderStatusCode, OrderStatusColor, PaymentMethods } from '../constants/data';
 import orderActions from '../actions/orderActions';
 import { Layout } from '../constants';
 const SUGGEST_ITEM_WIDTH = setValue(250) + setXAxisValue(10);
 const OrderDetail = ({ navigation, route }) => {
   const { data, isFromOrderManagement = false } = route.params;
   const observableOrder = orderStore.getOrder(data.id);
-  const bottomSheetRef = useRef();
+  const confirmSheetRef = useRef();
+  const statusSheetRef = useRef();
   useEffect(() => {
     if (!isFromOrderManagement) {
       const categoryIds = [];
@@ -52,7 +53,7 @@ const OrderDetail = ({ navigation, route }) => {
     };
     return (
       <Pressable onPress={onPress} style={styles.suggestItem}>
-        <Image source={{ uri: item.image }} style={styles.suggestImage} />
+        <Image source={{ uri: toCorrectImageUri(item.image) }} style={styles.suggestImage} />
         <View style={styles.suggestItemInfor}>
           <FText>{item.name}</FText>
           <View style={styles.suggestItemPrice}>
@@ -63,7 +64,7 @@ const OrderDetail = ({ navigation, route }) => {
     );
   }, []);
   const renderProgressItem = progress => (
-    <Observer>
+    <Observer key={progress.status}>
       {() => {
         const isRejectOrCancel = [OrderStatusCode.REJECTED, OrderStatusCode.CANCELLED].includes(observableOrder.status_code);
         const isActive = observableOrder.status_code >= progress.status && !isRejectOrCancel;
@@ -76,7 +77,7 @@ const OrderDetail = ({ navigation, route }) => {
     </Observer>
   );
   const renderProgressSideItem = (progress, index) => (
-    <Observer>
+    <Observer key={progress.status}>
       {() => {
         const isRejectOrCancel = [OrderStatusCode.REJECTED, OrderStatusCode.CANCELLED].includes(observableOrder.status_code);
         const isActivePoint = observableOrder.status_code >= progress.status && !isRejectOrCancel;
@@ -107,7 +108,7 @@ const OrderDetail = ({ navigation, route }) => {
     </Observer>
   );
   const onCancelOrder = () => {
-    bottomSheetRef.current?.snapTo?.(1);
+    confirmSheetRef.current?.snapTo?.(1);
   };
   const onConfirmCancelOrder = () => {
     orderActions.updateOrderStatus({
@@ -115,6 +116,17 @@ const OrderDetail = ({ navigation, route }) => {
       orderId: data.id
     });
     navigation.goBack();
+  };
+  const onNextStatusPress = () => {
+    statusSheetRef.current?.snapTo?.(1);
+  };
+  const onConfirmNextStatus = () => {
+    if (observableOrder.status_code < OrderStatusCode.DELIVERED) {
+      orderActions.updateOrderStatus({
+        statusCode: observableOrder.status_code + 1,
+        orderId: data.id
+      });
+    }
   };
   return (
     <Container>
@@ -191,7 +203,7 @@ const OrderDetail = ({ navigation, route }) => {
                 <Image
                   style={styles.productImage}
                   source={{
-                    uri: product.image
+                    uri: toCorrectImageUri(product.image)
                   }}
                 />
                 <View style={styles.productInfor}>
@@ -216,7 +228,7 @@ const OrderDetail = ({ navigation, route }) => {
                 Subtotal
               </FText>
               <FText fontSize={19} lineHeight={19}>
-                ${data.total_price - cartStore.tax * (data.total_price - cartStore.fee) - cartStore.fee}
+                ${(data.total_price - cartStore.tax * (data.total_price - cartStore.fee) - cartStore.fee).toFixed(2)}
                 <FText color={Colors.grey_suit} fontSize={14} lineHeight={19}>
                   {' '}
                   USD
@@ -282,26 +294,65 @@ const OrderDetail = ({ navigation, route }) => {
         )}
       </ScrollView>
       <View style={styles.bottomContainer}>
-        {data.status_code === OrderStatusCode.PENDING && (
-          <TouchableOpacity
-            onPress={onCancelOrder}
-            style={[
-              styles.btnConfirm,
-              {
-                backgroundColor: Colors.white,
-                borderColor: Colors.primary,
-                borderWidth: 1,
-                marginBottom: 10
-              }
-            ]}>
-            <FText color={Colors.primary}>Cancel Order</FText>
-          </TouchableOpacity>
-        )}
+        <Observer>
+          {() =>
+            !isFromOrderManagement &&
+            observableOrder.status_code === OrderStatusCode.PENDING && (
+              <TouchableOpacity
+                onPress={onCancelOrder}
+                style={[
+                  styles.btnConfirm,
+                  {
+                    backgroundColor: Colors.white,
+                    borderColor: Colors.primary,
+                    borderWidth: 1,
+                    marginBottom: 10
+                  }
+                ]}>
+                <FText color={Colors.primary}>Cancel Order</FText>
+              </TouchableOpacity>
+            )
+          }
+        </Observer>
+        <Observer>
+          {() =>
+            isFromOrderManagement &&
+            observableOrder.status_code < OrderStatusCode.DELIVERED && (
+              <TouchableOpacity
+                onPress={onNextStatusPress}
+                style={[
+                  styles.btnConfirm,
+                  {
+                    backgroundColor: Colors.white,
+                    borderColor: Colors.primary,
+                    borderWidth: 1,
+                    marginBottom: 10
+                  }
+                ]}>
+                <Observer>
+                  {() => {
+                    console.log(observableOrder);
+                    const statusKey = observableOrder.status_code;
+                    return (
+                      <FText color={Colors.primary}>
+                        Next status:{' '}
+                        <FText color={OrderStatusColor[Object.keys(OrderStatusCode)[statusKey]]}>
+                          {Object.keys(OrderStatusCode)[statusKey]}
+                        </FText>
+                      </FText>
+                    );
+                  }}
+                </Observer>
+              </TouchableOpacity>
+            )
+          }
+        </Observer>
         <TouchableOpacity onPress={onBackPress} style={styles.btnConfirm}>
           <FText color={Colors.white}>Go Back</FText>
         </TouchableOpacity>
       </View>
-      <ConfirmModal ref={bottomSheetRef} onConfirm={onConfirmCancelOrder} title="Are you sure you want to cancel this order?" />
+      <ConfirmModal ref={confirmSheetRef} onConfirm={onConfirmCancelOrder} title="Are you sure you want to cancel this order?" />
+      <ConfirmModal ref={statusSheetRef} onConfirm={onConfirmNextStatus} title="Are you sure you want to update status of this order?" />
     </Container>
   );
 };
