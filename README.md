@@ -4,6 +4,7 @@
 FoodHub - React Native application for food delivering
 
 <img src="https://user-images.githubusercontent.com/17398401/173228299-ec99223f-f3c8-415d-92d6-34ad5f21d9a0.png" data-canonical-src="https://gyazo.com/eb5c5741b6a9a16c692170a41a49c858.png" height="500" />
+
 ## Installation
 
 Clone my repo
